@@ -1,5 +1,6 @@
 from os import path
 from jsonlogger.logger import JSONLogger
+from MapColoniesJSONLogger.logger import generate_logger
 from src.config import read_json
 
 current_dir_path = path.dirname(__file__)
@@ -12,10 +13,11 @@ class Logger:
 
     @staticmethod
     def __get_instance():
-        return JSONLogger('main-info', config={'handlers': {'file': {'filename': config['logger']['filename'],
-                                                                     'backupCount': config['logger']['backup_count'],
-                                                                     'maxBytes': config['logger']['max_bytes']}}},
-                          additional_fields={'service': 'exporter-worker'})
+        return generate_logger('discrete-worker', log_level=config['logger']['level'],
+                               handlers=[{
+                                   'type': config['logger']['type'],
+                                    'path': config['logger']['filename']
+                               }])
 
     @staticmethod
     def get_logger_instance():
