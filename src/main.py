@@ -3,6 +3,7 @@ from src.worker import Worker
 from logger.jsonLogger import Logger
 from src.config import read_json
 import src.probe as probe
+from src.task_handler import TaskHandler
 import threading
 
 
@@ -11,6 +12,7 @@ class Main:
         current_dir_path = path.dirname(__file__)
         config_path = path.join(current_dir_path, '../config/production.json')
         self.__config = read_json(config_path)
+        self.__task_handler = TaskHandler()
 
         self.log = Logger.get_logger_instance()
         probe.readiness = True
@@ -21,6 +23,7 @@ class Main:
             f'Service is listening to broker: {self.__config["kafka"]["host_ip"]},'f' topic: {self.__config["kafka"]["topic"]}')
         try:
             self.log.info("starting service")
+            self.__task_handler.handle_tasks()
         except Exception as e:
             self.log.error(f'Error occurred during running service: {e}')
             probe.liveness = False

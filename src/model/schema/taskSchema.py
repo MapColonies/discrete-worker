@@ -1,4 +1,9 @@
 schema = {
-    "vrt_uri": "string",
-    "zoom_level": "integer"
+    "type": "object",
+    "properties": {
+        "discreted_id": {"type": "string"},
+        "vrt_uri": {"type": "string"},
+        "zoom_level": {"type": "number"},
+        "file_upload_location": {"type": "string"}
+    }
 }
