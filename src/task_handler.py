@@ -30,6 +30,9 @@ class TaskHandler:
                 if result:
                     self.log.info(f'Finished task - commitng to kafka')
                     consumer.commit()
+                else:
+                    // TODO: handle on result != True
+                    self.log.error(f'Execute task failed')
         except Exception as e:
             self.log.error(f'Error occurred: {e}.')
             raise e
@@ -43,5 +46,6 @@ class TaskHandler:
             // TODO: gdal2tiles will be added here
             return True
         except Exception as e:
+            // TODO: add task id
             self.log.error(f'Error occurred while exporting: {e}.')
             return False
