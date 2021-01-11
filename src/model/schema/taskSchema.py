@@ -1,13 +1,9 @@
 schema = {
     "type": "object",
     "properties": {
-        "filename": {"type": "string"},
-        "url": {"type": "string"},
-        "bbox": {"type": "array",
-                 "items": {
-                     "type": "number"
-                 }
-                 }
+        "discrete_id": {"type": "string"},
+        "vrt_uri": {"type": "string"},
+        "zoom_level": {"type": "number"},
+        "file_upload_location": {"type": "string"}
     }
 }
-

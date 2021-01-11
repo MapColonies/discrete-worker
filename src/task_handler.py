@@ -1,16 +1,13 @@
 from os import path
 from kafka import KafkaConsumer, BrokerConnection
 from kafka.coordinator.assignors.roundrobin import RoundRobinPartitionAssignor
-from src.exportImage import ExportImage
-from src.helper import Helper
 from logger.jsonLogger import Logger
 from src.config import read_json
+import json
 
 
 class TaskHandler:
     def __init__(self):
-        self.__helper = Helper()
-        self.__exportImage = ExportImage()
         self.log = Logger.get_logger_instance()
 
         current_dir_path = path.dirname(__file__)
@@ -28,11 +25,14 @@ class TaskHandler:
         try:
             consumer.subscribe([self.__config['kafka']['topic']])
             for task in consumer:
-                task_values = self.__helper.load_json(task.value)
+                task_values = json.loads(task.value)
                 result = self.execute_task(task_values)
                 if result:
-                    self.log.info(f'commitng task "{task_values["taskId"]}" to kafka')
+                    self.log.info(f'Finished task - commitng to kafka')
                     consumer.commit()
+                else:
+                    // TODO: handle on result != True
+                    self.log.error(f'Execute task failed')
         except Exception as e:
             self.log.error(f'Error occurred: {e}.')
             raise e
@@ -41,8 +41,11 @@ class TaskHandler:
 
     def execute_task(self, task_values):
         try:
-            self.__helper.json_fields_validate(task_values)
-            self.log.info(f'Task Id "{task_values["taskId"]}" received.')
-            return self.__exportImage.export(task_values['bbox'], task_values['fileName'], task_values['url'], task_values['taskId'], task_values['directoryName'], task_values['maxZoom'])
+            self.log.info(f'Executing task')
+            // TODO: add task id for all logs of specific task including when commiting it to kafka
+            // TODO: gdal2tiles will be added here
+            return True
         except Exception as e:
+            // TODO: add task id
             self.log.error(f'Error occurred while exporting: {e}.')
+            return False
