@@ -39,6 +39,8 @@ class TaskHandler:
     def execute_task(self, task_values):
         try:
             self.log.info(f'Executing task')
+            // TODO: add task id for all logs of specific task including when commiting it to kafka
+            // TODO: gdal2tiles will be added here
             return True
         except Exception as e:
             self.log.error(f'Error occurred while exporting: {e}.')

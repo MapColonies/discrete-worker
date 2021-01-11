@@ -16,7 +16,8 @@ class Logger:
         return generate_logger('discrete-worker', log_level=config['logger']['level'],
                                handlers=[{
                                    'type': config['logger']['type'],
-                                    'path': config['logger']['path']
+                                   'path': config['logger']['path'],
+                                   'output': config['logger']['output']
                                }])
 
     @staticmethod
