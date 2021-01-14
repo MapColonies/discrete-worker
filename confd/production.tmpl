@@ -8,13 +8,13 @@
         "poll_records": {{ getv "/configuration/exporter/worker/kafka/poll/records" "1" }}
     },
     "logger": {
-        "type": "{{ getv "/configuration/exporter/worker/logger/type" "rotating_file" }}",
+        "type": "{{ getv "/configuration/exporter/worker/logger/type" "stream" }}",
         "level": "{{ getv "/configuration/exporter/worker/logger/level" "INFO" }}",
         "path": "{{ getv "/configuration/exporter/worker/logger/path" "./dw_logs.log" }}",
         "output": "{{ getv "/configuration/exporter/worker/logger/output" "stdout" }}"
     },
-    "exportstorage": {
-        "url": "{{ getv "/configuration/exporter/worker/exportstorage/url" "http://127.0.0.1:8080" }}"
+    "discrete_storage": {
+        "url": "{{ getv "/configuration/exporter/worker/discrete/storage/url" "http://127.0.0.1:8080" }}"
     },
     "gdal": {
         "multithread": {{ getv "/configuration/exporter/worker/gdal/multithread" "true" }},
@@ -32,7 +32,8 @@
         "secret_access_key": "{{ getv "/configuration/exporter/worker/s3/secret/access/key" "minioadmin" }}",
         "bucket": "{{ getv "/configuration/exporter/worker/s3/bucket" "mapping-images" }}",
         "download_expired_time": {{ getv "/configuration/exporter/worker/s3/download/expired/time" "604800" }},
-        "ssl_enabled": {{ getv "/configuration/exporter/worker/s3/ssl/enabled" "false" }}
+        "ssl_enabled": {{ getv "/configuration/exporter/worker/s3/ssl/enabled" "false" }},
+        "virtual_hosting": "{{ getv "/configuration/exporter/worker/s3/virtual/hosting" "NO" }}"
     },
     "storage_provider": "{{ getv "/configuration/exporter/worker/storage/provider" "fs" }}",
     "max_attempts": {{ getv "/configuration/exporter/worker/max/attempts" "3" }},
