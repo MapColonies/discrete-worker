@@ -1,5 +1,5 @@
 kafka-python
 flask
 requests
-mapcoloniesjsonlogger==0.0.15
+mapcoloniesjsonlogger==1.0.0
 boto3

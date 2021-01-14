@@ -3,16 +3,16 @@ from kafka import KafkaConsumer, BrokerConnection
 from kafka.coordinator.assignors.roundrobin import RoundRobinPartitionAssignor
 from logger.jsonLogger import Logger
 from src.config import read_json
+from src.worker import Worker
 import json
 
 
 class TaskHandler:
     def __init__(self):
         self.log = Logger.get_logger_instance()
-
-        current_dir_path = path.dirname(__file__)
-        config_path = path.join(current_dir_path, '../config/production.json')
+        config_path = path.join(path.dirname(__file__), '../config/production.json')
         self.__config = read_json(config_path)
+        self.__worker = Worker()
 
     def handle_tasks(self):
         consumer = KafkaConsumer(bootstrap_servers=self.__config['kafka']['host_ip'],
@@ -28,24 +28,24 @@ class TaskHandler:
                 task_values = json.loads(task.value)
                 result = self.execute_task(task_values)
                 if result:
-                    self.log.info(f'Finished task - commitng to kafka')
+                    self.log.info('Finished task with ID: "{1}". Commiting to kafka.'.format(task_values["discrete_id"]))
                     consumer.commit()
                 else:
-                    // TODO: handle on result != True
-                    self.log.error(f'Execute task failed')
+                    # TODO: handle on result != True
+                    self.log.error('Execute task failed. ID: "{0}"'.format(task_values["discrete_id"]))
         except Exception as e:
-            self.log.error(f'Error occurred: {e}.')
+            self.log.error('Error occurred: {0}.'.format(e))
             raise e
         finally:
             consumer.close()
 
     def execute_task(self, task_values):
         try:
-            self.log.info(f'Executing task')
-            // TODO: add task id for all logs of specific task including when commiting it to kafka
-            // TODO: gdal2tiles will be added here
+            self.log.info('Executing task {0}'.format(task_values["discrete_id"]))
+            self.__worker.buildvrt_utility(task_values)
+            self.__worker.gdal2tiles_utility(task_values)
+
             return True
         except Exception as e:
-            // TODO: add task id
-            self.log.error(f'Error occurred while exporting: {e}.')
+            self.log.error('An error occured while processing task id "{0}: {1}"'.format(task_values["discrete_id"], e))
             return False

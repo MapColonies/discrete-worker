@@ -19,13 +19,11 @@ class Main:
         probe.liveness = True
 
     def _start_service(self):
-        self.log.info(
-            f'Service is listening to broker: {self.__config["kafka"]["host_ip"]},'f' topic: {self.__config["kafka"]["topic"]}')
+        self.log.info('Service is listening to broker: {0}, topic: {1}'.format(self.__config["kafka"]["host_ip"], self.__config["kafka"]["topic"]))
         try:
-            self.log.info("starting service")
             self.__task_handler.handle_tasks()
         except Exception as e:
-            self.log.error(f'Error occurred during running service: {e}')
+            self.log.error('Error occurred during running service: {0}'.format(e))
             probe.liveness = False
 
 

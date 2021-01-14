@@ -1,5 +1,4 @@
 from os import path
-from jsonlogger.logger import JSONLogger
 from MapColoniesJSONLogger.logger import generate_logger
 from src.config import read_json
 
