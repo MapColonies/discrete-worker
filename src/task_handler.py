@@ -28,24 +28,24 @@ class TaskHandler:
                 task_values = json.loads(task.value)
                 result = self.execute_task(task_values)
                 if result:
-                    self.log.info(f'Finished task with ID: "{task_values["discrete_id"]}". Commiting to kafka.')
+                    self.log.info('Finished task with ID: "{1}". Commiting to kafka.'.format(task_values["discrete_id"]))
                     consumer.commit()
                 else:
                     # TODO: handle on result != True
-                    self.log.error(f'Execute task failed. ID: "{task_values["discrete_id"]}"')
+                    self.log.error('Execute task failed. ID: "{0}"'.format(task_values["discrete_id"]))
         except Exception as e:
-            self.log.error(f'Error occurred: {e}.')
+            self.log.error('Error occurred: {0}.'.format(e))
             raise e
         finally:
             consumer.close()
 
     def execute_task(self, task_values):
         try:
-            self.log.info(f'Executing task {task_values["discrete_id"]}')
+            self.log.info('Executing task {0}'.format(task_values["discrete_id"]))
             self.__worker.buildvrt_utility(task_values)
             self.__worker.gdal2tiles_utility(task_values)
 
             return True
         except Exception as e:
-            self.log.error(f'An error occured while processing task id "{task_values["discrete_id"]}: {e}"')
+            self.log.error('An error occured while processing task id "{0}: {1}"'.format(task_values["discrete_id"], e))
             return False
