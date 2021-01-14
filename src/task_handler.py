@@ -28,7 +28,7 @@ class TaskHandler:
                 task_values = json.loads(task.value)
                 result = self.execute_task(task_values)
                 if result:
-                    self.log.info('Finished task with ID: "{1}". Commiting to kafka.'.format(task_values["discrete_id"]))
+                    self.log.info('Finished task with ID: "{0}". Commiting to kafka.'.format(task_values["discrete_id"]))
                     consumer.commit()
                 else:
                     # TODO: handle on result != True
@@ -44,6 +44,7 @@ class TaskHandler:
             self.log.info('Executing task {0}'.format(task_values["discrete_id"]))
             self.__worker.buildvrt_utility(task_values)
             self.__worker.gdal2tiles_utility(task_values)
+            self.__worker.remove_temp_files()
 
             return True
         except Exception as e:

@@ -1,41 +1,45 @@
 {
     "kafka" : {
-        "host_ip": {{ getv "/configuration/exporter/worker/kafka/host/ip" "[\"10.28.11.49:9092\"]" }},
-        "topic": "{{ getv "/configuration/exporter/worker/kafka/topic" "topic-test-101" }}",
-        "group_id": "{{ getv "/configuration/exporter/worker/kafka/group/id" "task_group_1" }}",
-        "offset_reset": "{{ getv "/configuration/exporter/worker/kafka/offest/reset" "earliest" }}",
-        "poll_timeout_milliseconds": {{ getv "/configuration/exporter/worker/kafka/poll/timeout/milliseconds" "270000000" }},
-        "poll_records": {{ getv "/configuration/exporter/worker/kafka/poll/records" "1" }}
+        "host_ip": {{ getv "/configuration/discrete/worker/kafka/host/ip" "[\"10.28.11.49:9092\"]" }},
+        "topic": "{{ getv "/configuration/discrete/worker/kafka/topic" "topic-test-101" }}",
+        "group_id": "{{ getv "/configuration/discrete/worker/kafka/group/id" "task_group_1" }}",
+        "offset_reset": "{{ getv "/configuration/discrete/worker/kafka/offest/reset" "earliest" }}",
+        "poll_timeout_milliseconds": {{ getv "/configuration/discrete/worker/kafka/poll/timeout/milliseconds" "270000000" }},
+        "poll_records": {{ getv "/configuration/discrete/worker/kafka/poll/records" "1" }}
     },
     "logger": {
-        "type": "{{ getv "/configuration/exporter/worker/logger/type" "stream" }}",
-        "level": "{{ getv "/configuration/exporter/worker/logger/level" "INFO" }}",
-        "path": "{{ getv "/configuration/exporter/worker/logger/path" "./dw_logs.log" }}",
-        "output": "{{ getv "/configuration/exporter/worker/logger/output" "stdout" }}"
+        "type": "{{ getv "/configuration/discrete/worker/logger/type" "stream" }}",
+        "level": "{{ getv "/configuration/discrete/worker/logger/level" "INFO" }}",
+        "path": "{{ getv "/configuration/discrete/worker/logger/path" "./dw_logs.log" }}",
+        "output": "{{ getv "/configuration/discrete/worker/logger/output" "stdout" }}"
     },
     "discrete_storage": {
-        "url": "{{ getv "/configuration/exporter/worker/discrete/storage/url" "http://127.0.0.1:8080" }}"
+        "url": "{{ getv "/configuration/discrete/worker/discrete/storage/url" "http://127.0.0.1:8080" }}"
     },
     "gdal": {
-        "multithread": {{ getv "/configuration/exporter/worker/gdal/multithread" "true" }},
-        "thread_count": {{ getv "/configuration/exporter/worker/gdal/thread/count" "-1" }},
-        "output_srs": "{{ getv "/configuration/exporter/worker/gdal/output/srs" "EPSG:4326" }}",
-        "output_format": "{{ getv "/configuration/exporter/worker/gdal/output/format" "GPKG" }}"
+        "multithread": {{ getv "/configuration/discrete/worker/gdal/multithread" "true" }},
+        "thread_count": {{ getv "/configuration/discrete/worker/gdal/thread/count" "-1" }},
+        "vrt": {
+            "folder": "{{ getv "/configuration/discrete/worker/gdal/vrt/folder" "./" }}",
+            "no_data": "{{ getv "/configuration/discrete/worker/gdal/vrt/no/data" "0" }}",
+            "output_srs": "{{ getv "/configuration/discrete/worker/gdal/vrt/output/srs" "EPSG:4326" }}",
+            "resample_algo": "{{ getv "/configuration/discrete/worker/gdal/vrt/resample/algo" "bilinear" }}"
+        }
     },
     "fs": {
-        "external_physical_path": "{{ getv "/configuration/exporter/worker/fs/external/physical/path" "/ubuntu/outputs"}}",
-        "internal_outputs_path": "{{ getv "/configuration/exporter/worker/fs/internal/outputs/path" "/app/outputs"}}"
+        "external_physical_path": "{{ getv "/configuration/discrete/worker/fs/external/physical/path" "/ubuntu/outputs"}}",
+        "internal_outputs_path": "{{ getv "/configuration/discrete/worker/fs/internal/outputs/path" "/app/outputs"}}"
     },
     "s3": {
-        "endpoint_url": "{{ getv "/configuration/exporter/worker/s3/endpoint/url" "localhost:9000" }}",
-        "access_key_id": "{{ getv "/configuration/exporter/worker/s3/access/key/id" "minioadmin" }}",
-        "secret_access_key": "{{ getv "/configuration/exporter/worker/s3/secret/access/key" "minioadmin" }}",
-        "bucket": "{{ getv "/configuration/exporter/worker/s3/bucket" "mapping-images" }}",
-        "download_expired_time": {{ getv "/configuration/exporter/worker/s3/download/expired/time" "604800" }},
-        "ssl_enabled": {{ getv "/configuration/exporter/worker/s3/ssl/enabled" "false" }},
-        "virtual_hosting": "{{ getv "/configuration/exporter/worker/s3/virtual/hosting" "NO" }}"
+        "endpoint_url": "{{ getv "/configuration/discrete/worker/s3/endpoint/url" "localhost:9000" }}",
+        "access_key_id": "{{ getv "/configuration/discrete/worker/s3/access/key/id" "minioadmin" }}",
+        "secret_access_key": "{{ getv "/configuration/discrete/worker/s3/secret/access/key" "minioadmin" }}",
+        "bucket": "{{ getv "/configuration/discrete/worker/s3/bucket" "mapping-images" }}",
+        "download_expired_time": {{ getv "/configuration/discrete/worker/s3/download/expired/time" "604800" }},
+        "ssl_enabled": "{{ getv "/configuration/discrete/worker/s3/ssl/enabled" "NO" }}",
+        "virtual_hosting": "{{ getv "/configuration/discrete/worker/s3/virtual/hosting" "NO" }}"
     },
-    "storage_provider": "{{ getv "/configuration/exporter/worker/storage/provider" "fs" }}",
-    "max_attempts": {{ getv "/configuration/exporter/worker/max/attempts" "3" }},
+    "storage_provider": "{{ getv "/configuration/discrete/worker/storage/provider" "fs" }}",
+    "max_attempts": {{ getv "/configuration/discrete/worker/max/attempts" "3" }},
     "mandatory_task_fields": ["fileName", "url", "bbox", "taskId", "directoryName"]
 }
