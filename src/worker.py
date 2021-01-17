@@ -20,15 +20,15 @@ class Worker:
         output_path = path.join(output_folder_name, output_file_name) 
         return output_path
 
-    def remove_vrt_file(self, discrete_id):
+    def remove_vrt_file(self, discrete_id, zoom_levels):
         vrt_path = self.vrt_file_location(discrete_id)
-        self.log.info('Removing vrt file from "{0}"'.format(vrt_path))
+        self.log.info('Removing vrt file from path "{0}" on ID {1} with zoom-levels {2}'.format(vrt_path, discrete_id, zoom_levels))
         remove_file(vrt_path)
 
-    def remove_s3_temp_files(self):
+    def remove_s3_temp_files(self, discrete_id, zoom_levels):
         bucket = self.__config["s3"]["bucket"]
         s3_local_path = '/vsis3/{0}'.format(bucket)
-        self.log.info('Removing folder {0}'.format(s3_local_path))
+        self.log.info('Removing folder {0} on ID {1} with zoom-levels {2}'.format(s3_local_path, discrete_id, zoom_levels))
         shutil.rmtree(s3_local_path)
 
 

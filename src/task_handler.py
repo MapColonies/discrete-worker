@@ -43,11 +43,12 @@ class TaskHandler:
     def execute_task(self, task_values):
         try:
             discrete_id = task_values["discrete_id"]
-            self.log.info('Executing task {0} with zoom-levels {1}'.format(discrete_id, task_values["zoom_levels"]))
+            zoom_levels = task_values["zoom_levels"]
+            self.log.info('Executing task {0} with zoom-levels {1}'.format(discrete_id, zoom_levels))
             self.__worker.buildvrt_utility(task_values)
             self.__worker.gdal2tiles_utility(task_values)
-            self.__worker.remove_s3_temp_files()
-            self.__worker.remove_vrt_file(discrete_id)
+            self.__worker.remove_s3_temp_files(discrete_id, zoom_levels)
+            self.__worker.remove_vrt_file(discrete_id, zoom_levels)
 
             return True
         except Exception as e:
