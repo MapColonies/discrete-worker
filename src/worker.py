@@ -1,5 +1,5 @@
 from osgeo import gdal, ogr
-from os import path
+from os import path, remove as remove_file
 from logger.jsonLogger import Logger
 from config import read_json
 from gdal2tiles import generate_tiles
@@ -20,7 +20,12 @@ class Worker:
         output_path = path.join(output_folder_name, output_file_name) 
         return output_path
 
-    def remove_temp_files(self):
+    def remove_vrt_file(self, discrete_id):
+        vrt_path = self.vrt_file_location(discrete_id)
+        self.log.info('Removing vrt file from "{0}"'.format(vrt_path))
+        remove_file(vrt_path)
+
+    def remove_s3_temp_files(self):
         bucket = self.__config["s3"]["bucket"]
         s3_local_path = '/vsis3/{0}'.format(bucket)
         self.log.info('Removing folder {0}'.format(s3_local_path))

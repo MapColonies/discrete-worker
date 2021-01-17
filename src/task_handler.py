@@ -41,10 +41,12 @@ class TaskHandler:
 
     def execute_task(self, task_values):
         try:
-            self.log.info('Executing task {0}'.format(task_values["discrete_id"]))
+            discrete_id = task_values["discrete_id"]
+            self.log.info('Executing task {0}'.format(discrete_id))
             self.__worker.buildvrt_utility(task_values)
             self.__worker.gdal2tiles_utility(task_values)
-            self.__worker.remove_temp_files()
+            self.__worker.remove_s3_temp_files()
+            self.__worker.remove_vrt_file(discrete_id)
 
             return True
         except Exception as e:
