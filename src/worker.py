@@ -55,7 +55,7 @@ class Worker:
             'resampleAlg': self.__config["gdal"]["vrt"]["resample_algo"]
         }
 
-        self.log.info("Starting process GDAL-BUILD-VRT on ID: {0}".format(key))
+        self.log.info("Starting process GDAL-BUILD-VRT on ID: {0} and zoom-levels {1}".format(key, task_values["zoom_levels"]))
         gdal.BuildVRT(self.vrt_file_location(key), discrete_layer["tiffs"], **vrt_config)
 
 
@@ -74,5 +74,5 @@ class Worker:
         bucket = self.__config["s3"]["bucket"]
         s3_path = '/vsis3/{0}/{1}'.format(bucket, key)
 
-        self.log.info("Starting process GDAL2TILES on ID: {0}".format(key))
+        self.log.info("Starting process GDAL2TILES on ID: {0}, and zoom-levels: {1}".format(key, task_values["zoom_levels"]))
         generate_tiles(self.vrt_file_location(key), s3_path, **options)
