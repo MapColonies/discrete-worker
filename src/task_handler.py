@@ -28,7 +28,8 @@ class TaskHandler:
                 task_values = json.loads(task.value)
                 result = self.execute_task(task_values)
                 if result:
-                    self.log.info('Finished task with ID: "{0}". Commiting to kafka.'.format(task_values["discrete_id"]))
+                    self.log.info('Finished task with ID: "{0}" with zoom-levels {1} Commiting to kafka.'
+                        .format(task_values["discrete_id"], task_values["zoom_levels"]))
                     consumer.commit()
                 else:
                     # TODO: handle on result != True
@@ -41,10 +42,13 @@ class TaskHandler:
 
     def execute_task(self, task_values):
         try:
-            self.log.info('Executing task {0}'.format(task_values["discrete_id"]))
+            discrete_id = task_values["discrete_id"]
+            zoom_levels = task_values["zoom_levels"]
+            self.log.info('Executing task {0} with zoom-levels {1}'.format(discrete_id, zoom_levels))
             self.__worker.buildvrt_utility(task_values)
             self.__worker.gdal2tiles_utility(task_values)
-            self.__worker.remove_temp_files()
+            self.__worker.remove_s3_temp_files(discrete_id, zoom_levels)
+            self.__worker.remove_vrt_file(discrete_id, zoom_levels)
 
             return True
         except Exception as e:

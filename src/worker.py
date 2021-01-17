@@ -1,5 +1,5 @@
 from osgeo import gdal, ogr
-from os import path
+from os import path, remove as remove_file
 from logger.jsonLogger import Logger
 from config import read_json
 from gdal2tiles import generate_tiles
@@ -20,10 +20,15 @@ class Worker:
         output_path = path.join(output_folder_name, output_file_name) 
         return output_path
 
-    def remove_temp_files(self):
+    def remove_vrt_file(self, discrete_id, zoom_levels):
+        vrt_path = self.vrt_file_location(discrete_id)
+        self.log.info('Removing vrt file from path "{0}" on ID {1} with zoom-levels {2}'.format(vrt_path, discrete_id, zoom_levels))
+        remove_file(vrt_path)
+
+    def remove_s3_temp_files(self, discrete_id, zoom_levels):
         bucket = self.__config["s3"]["bucket"]
         s3_local_path = '/vsis3/{0}'.format(bucket)
-        self.log.info('Removing folder {0}'.format(s3_local_path))
+        self.log.info('Removing folder {0} on ID {1} with zoom-levels {2}'.format(s3_local_path, discrete_id, zoom_levels))
         shutil.rmtree(s3_local_path)
 
 
@@ -50,7 +55,7 @@ class Worker:
             'resampleAlg': self.__config["gdal"]["vrt"]["resample_algo"]
         }
 
-        self.log.info("Starting process GDAL-BUILD-VRT on ID: {0}".format(key))
+        self.log.info("Starting process GDAL-BUILD-VRT on ID: {0} and zoom-levels {1}".format(key, task_values["zoom_levels"]))
         gdal.BuildVRT(self.vrt_file_location(key), discrete_layer["tiffs"], **vrt_config)
 
 
@@ -69,5 +74,5 @@ class Worker:
         bucket = self.__config["s3"]["bucket"]
         s3_path = '/vsis3/{0}/{1}'.format(bucket, key)
 
-        self.log.info("Starting process GDAL2TILES on ID: {0}".format(key))
+        self.log.info("Starting process GDAL2TILES on ID: {0}, and zoom-levels: {1}".format(key, task_values["zoom_levels"]))
         generate_tiles(self.vrt_file_location(key), s3_path, **options)
