@@ -15,7 +15,6 @@ keys = [
     "/configuration/discrete/worker/discrete/storage/url",
     "/configuration/discrete/worker/gdal/multithread",
     "/configuration/discrete/worker/gdal/thread/count",
-    "/configuration/discrete/worker/gdal/vrt/folder",
     "/configuration/discrete/worker/gdal/vrt/no/data",
     "/configuration/discrete/worker/gdal/vrt/output/srs",
     "/configuration/discrete/worker/gdal/vrt/resample/algo",

@@ -3,6 +3,7 @@ from os import path, remove as remove_file
 from logger.jsonLogger import Logger
 from config import read_json
 from gdal2tiles import generate_tiles
+import worker_constants
 import requests
 import shutil
 
@@ -15,9 +16,8 @@ class Worker:
         self.__config = read_json(config_path)
 
     def vrt_file_location(self, discrete_id):
-        output_folder_name = self.__config["gdal"]["vrt"]["folder"]
         output_file_name = '{0}.vrt'.format(discrete_id)
-        output_path = path.join(output_folder_name, output_file_name) 
+        output_path = path.join(worker_constants.OUTPUT_FOLDER_NAME, output_file_name) 
         return output_path
 
     def remove_vrt_file(self, discrete_id, zoom_levels):

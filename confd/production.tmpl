@@ -20,7 +20,6 @@
         "multithread": {{ getv "/configuration/discrete/worker/gdal/multithread" "true" }},
         "thread_count": {{ getv "/configuration/discrete/worker/gdal/thread/count" "-1" }},
         "vrt": {
-            "folder": "{{ getv "/configuration/discrete/worker/gdal/vrt/folder" "./" }}",
             "no_data": "{{ getv "/configuration/discrete/worker/gdal/vrt/no/data" "0" }}",
             "output_srs": "{{ getv "/configuration/discrete/worker/gdal/vrt/output/srs" "EPSG:4326" }}",
             "resample_algo": "{{ getv "/configuration/discrete/worker/gdal/vrt/resample/algo" "bilinear" }}"
