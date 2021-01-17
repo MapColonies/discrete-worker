@@ -13,7 +13,6 @@ RUN chmod +x start.sh
 RUN python3 /app/confd/generate-config.py --environment production
 
 RUN chmod -R 777 ./confd && mkdir -p config && chmod 777 ./config && \
-    mkdir outputs && chmod -R 777 ./outputs && \
-    mkdir -p logs && chmod -R 777 logs 
-
+    mkdir vrt_outputs && chmod -R 777 ./vrt_outputs && \
+    mkdir -p logs && chmod -R 777 logs
 CMD ["sh", "start.sh"]
