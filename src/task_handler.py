@@ -1,10 +1,11 @@
-from os import path
+from os import path, makedirs
 from kafka import KafkaConsumer, BrokerConnection
 from kafka.coordinator.assignors.roundrobin import RoundRobinPartitionAssignor
 from logger.jsonLogger import Logger
 from src.config import read_json
 from src.worker import Worker
 import json
+import worker_constants
 
 
 class TaskHandler:
@@ -13,6 +14,11 @@ class TaskHandler:
         config_path = path.join(path.dirname(__file__), '../config/production.json')
         self.__config = read_json(config_path)
         self.__worker = Worker()
+
+    def create_vrt_outputs_folder(self):
+        if not path.exists(worker_constants.VRT_OUTPUT_FOLDER_NAME):
+            self.log.info("Creating a vrt_outputs folder in path: {0}".format(worker_constants.VRT_OUTPUT_FOLDER_NAME))
+            makedirs(worker_constants.VRT_OUTPUT_FOLDER_NAME)
 
     def handle_tasks(self):
         consumer = KafkaConsumer(bootstrap_servers=self.__config['kafka']['host_ip'],
