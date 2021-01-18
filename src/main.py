@@ -21,6 +21,7 @@ class Main:
     def _start_service(self):
         self.log.info('Service is listening to broker: {0}, topic: {1}'.format(self.__config["kafka"]["host_ip"], self.__config["kafka"]["topic"]))
         try:
+            self.__task_handler.create_vrt_outputs_folder()
             self.__task_handler.handle_tasks()
         except Exception as e:
             self.log.error('Error occurred during running service: {0}'.format(e))
