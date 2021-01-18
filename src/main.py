@@ -29,7 +29,7 @@ class Main:
             self.__utilities.create_folder(worker_constants.TILES_OUTPUT_FOLDER_NAME)
 
             if (self.__config['storage_provider'].upper() == StorageProvider.S3):
-                self.__utilities.set_gdal_s3()
+                Utilities.set_gdal_s3()
 
             self.__task_handler.handle_tasks()
         except Exception as e:
