@@ -4,6 +4,7 @@ from kafka.coordinator.assignors.roundrobin import RoundRobinPartitionAssignor
 from logger.jsonLogger import Logger
 from src.config import read_json
 from src.worker import Worker
+from model.enums.storage_provider import StorageProvider
 import json
 import worker_constants
 
@@ -14,11 +15,6 @@ class TaskHandler:
         config_path = path.join(path.dirname(__file__), '../config/production.json')
         self.__config = read_json(config_path)
         self.__worker = Worker()
-
-    def create_vrt_outputs_folder(self):
-        if not path.exists(worker_constants.VRT_OUTPUT_FOLDER_NAME):
-            self.log.info("Creating a vrt_outputs folder in path: {0}".format(worker_constants.VRT_OUTPUT_FOLDER_NAME))
-            makedirs(worker_constants.VRT_OUTPUT_FOLDER_NAME)
 
     def handle_tasks(self):
         consumer = KafkaConsumer(bootstrap_servers=self.__config['kafka']['host_ip'],
@@ -51,9 +47,12 @@ class TaskHandler:
             discrete_id = task_values["discrete_id"]
             zoom_levels = task_values["zoom_levels"]
             self.log.info('Executing task {0} with zoom-levels {1}'.format(discrete_id, zoom_levels))
+            
             self.__worker.buildvrt_utility(task_values)
             self.__worker.gdal2tiles_utility(task_values)
-            self.__worker.remove_s3_temp_files(discrete_id, zoom_levels)
+
+            if (self.__config['storage_provider'].upper() == StorageProvider.S3):
+                self.__worker.remove_s3_temp_files(discrete_id, zoom_levels)
             self.__worker.remove_vrt_file(discrete_id, zoom_levels)
 
             return True

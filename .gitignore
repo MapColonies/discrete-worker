@@ -1,5 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
-outputs
+vrt_outputs
+tiles_outputs
 #confd
 confd
 !confd/**/*.tmpl
