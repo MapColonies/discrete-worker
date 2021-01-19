@@ -3,7 +3,6 @@ from os import path, makedirs
 from src.config import read_json
 from osgeo import gdal
 from model.enums.storage_provider import StorageProvider
-import worker_constants
 
 current_dir_path = path.dirname(__file__)
 config_path = path.join(current_dir_path, '../config/production.json')

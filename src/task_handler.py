@@ -1,4 +1,4 @@
-from os import path, makedirs
+from os import path
 from kafka import KafkaConsumer, BrokerConnection
 from kafka.coordinator.assignors.roundrobin import RoundRobinPartitionAssignor
 from logger.jsonLogger import Logger
@@ -6,7 +6,6 @@ from src.config import read_json
 from src.worker import Worker
 from model.enums.storage_provider import StorageProvider
 import json
-import worker_constants
 
 
 class TaskHandler:

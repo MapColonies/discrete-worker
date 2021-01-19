@@ -3,7 +3,6 @@ from os import path, remove as remove_file
 from logger.jsonLogger import Logger
 from config import read_json
 from gdal2tiles import generate_tiles
-from model.enums.storage_provider import StorageProvider
 from utilities import Utilities
 import worker_constants
 import requests
