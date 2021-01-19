@@ -31,7 +31,7 @@ class Main:
             if (storage_provider == StorageProvider.FS):
                 self.__utilities.create_folder(worker_constants.TILES_OUTPUT_FOLDER_NAME)
 
-            if (storage_provider == StorageProvider.S3):
+            elif (storage_provider == StorageProvider.S3):
                 Utilities.set_gdal_s3()
 
             self.__task_handler.handle_tasks()
