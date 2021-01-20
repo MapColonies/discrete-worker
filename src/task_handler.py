@@ -11,7 +11,8 @@ import json
 class TaskHandler:
     def __init__(self):
         self.log = Logger.get_logger_instance()
-        config_path = path.join(path.dirname(__file__), '../config/production.json')
+        config_path = path.join(path.dirname(__file__),
+                                '../config/production.json')
         self.__config = read_json(config_path)
         self.__worker = Worker()
 
@@ -27,26 +28,21 @@ class TaskHandler:
             consumer.subscribe([self.__config['kafka']['topic']])
             for task in consumer:
                 task_values = json.loads(task.value)
-                result = self.execute_task(task_values)
-                if result:
-                    self.log.info('Finished task with ID: "{0}" with zoom-levels {1} Commiting to kafka.'
-                        .format(task_values["discrete_id"], task_values["zoom_levels"]))
-                    consumer.commit()
-                else:
-                    # TODO: handle on result != True
-                    self.log.error('Execute task failed. ID: "{0}"'.format(task_values["discrete_id"]))
+                self.execute_task(task_values)
+                self.log.info('Finished task with ID: "{0}" with zoom-levels {1} Commiting to kafka.'
+                              .format(task_values["discrete_id"], task_values["zoom_levels"]))
+                consumer.commit()
         except Exception as e:
-            self.log.error('Error occurred: {0}.'.format(e))
             raise e
         finally:
             consumer.close()
 
     def execute_task(self, task_values):
+        discrete_id = task_values["discrete_id"]
+        zoom_levels = task_values["zoom_levels"]
         try:
-            discrete_id = task_values["discrete_id"]
-            zoom_levels = task_values["zoom_levels"]
             self.log.info('Executing task {0} with zoom-levels {1}'.format(discrete_id, zoom_levels))
-            
+
             self.__worker.buildvrt_utility(task_values)
             self.__worker.gdal2tiles_utility(task_values)
 
@@ -54,7 +50,7 @@ class TaskHandler:
                 self.__worker.remove_s3_temp_files(discrete_id, zoom_levels)
             self.__worker.remove_vrt_file(discrete_id, zoom_levels)
 
-            return True
         except Exception as e:
-            self.log.error('An error occured while processing task id "{0}: {1}"'.format(task_values["discrete_id"], e))
-            return False
+            self.log.error('An error occured while processing task id "{0}" on zoom-levels {1} with error: {2}'
+                           .format(discrete_id, zoom_levels, e))
+            raise e

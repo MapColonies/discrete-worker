@@ -1,7 +1,10 @@
 schema = {
     "type": "object",
     "properties": {
-        "discrete_id": {"type": "string"},
-        "zoom_level": {"type": "array"}
+        "layer_name": {"type": "string"},
+        "tsak_id": {"type": "string"},
+        "version": {"type": "string"},
+        "zoom_level": {"type": "string"},
+        "tiffs": {"type": "array"}
     }
 }

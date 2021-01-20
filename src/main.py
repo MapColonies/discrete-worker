@@ -6,7 +6,7 @@ import src.probe as probe
 from src.task_handler import TaskHandler
 import threading
 import worker_constants
-from utilities import Utilities
+from utilities import create_folder, set_gdal_s3
 from model.enums.storage_provider import StorageProvider
 
 
@@ -16,7 +16,6 @@ class Main:
         config_path = path.join(current_dir_path, '../config/production.json')
         self.__config = read_json(config_path)
         self.__task_handler = TaskHandler()
-        self.__utilities = Utilities()
 
         self.log = Logger.get_logger_instance()
         probe.readiness = True
@@ -26,13 +25,13 @@ class Main:
         self.log.info('Service is listening to broker: {0}, topic: {1}'.format(self.__config["kafka"]["host_ip"], self.__config["kafka"]["topic"]))
         storage_provider = self.__config['storage_provider'].upper()
         try:
-            self.__utilities.create_folder(worker_constants.VRT_OUTPUT_FOLDER_NAME)
+            create_folder(worker_constants.VRT_OUTPUT_FOLDER_NAME)
 
             if (storage_provider == StorageProvider.FS):
-                self.__utilities.create_folder(worker_constants.TILES_OUTPUT_FOLDER_NAME)
+                create_folder(worker_constants.TILES_OUTPUT_FOLDER_NAME)
 
             elif (storage_provider == StorageProvider.S3):
-                Utilities.set_gdal_s3()
+                set_gdal_s3()
 
             self.__task_handler.handle_tasks()
         except Exception as e:

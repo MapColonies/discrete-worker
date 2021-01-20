@@ -1,0 +1,2 @@
+class VRTError(Exception):
+    pass

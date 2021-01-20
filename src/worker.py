@@ -3,7 +3,8 @@ from os import path, remove as remove_file
 from logger.jsonLogger import Logger
 from config import read_json
 from gdal2tiles import generate_tiles
-from utilities import Utilities
+from utilities import get_tiles_location
+from errors.vrt_errors import VRTError
 import worker_constants
 import requests
 import shutil
@@ -15,8 +16,7 @@ class Worker:
         config_path = path.join(path.dirname(__file__),
                                 '../config/production.json')
         self.__config = read_json(config_path)
-        self.__utilities = Utilities()
-        self.tiles_folder_location = Utilities.get_tiles_location()
+        self.tiles_folder_location = get_tiles_location()
 
     def vrt_file_location(self, discrete_id):
         output_file_name = '{0}.vrt'.format(discrete_id)
@@ -46,7 +46,13 @@ class Worker:
         }
 
         self.log.info("Starting process GDAL-BUILD-VRT on ID: {0} and zoom-levels {1}".format(key, task_values["zoom_levels"]))
-        gdal.BuildVRT(self.vrt_file_location(key), discrete_layer["tiffs"], **vrt_config)
+        vrt_result = gdal.BuildVRT(self.vrt_file_location(key), discrete_layer["tiffs"], **vrt_config)
+
+        if vrt_result != None:
+            vrt_result.FlushCache()
+            vrt_result = None
+        else:
+            raise VRTError("Could not create VRT File")
 
 
     def gdal2tiles_utility(self, task_values):
