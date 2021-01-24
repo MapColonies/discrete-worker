@@ -28,10 +28,12 @@ class TaskHandler:
             consumer.subscribe([self.__config['kafka']['topic']])
             for task in consumer:
                 task_values = json.loads(task.value)
-                self.execute_task(task_values)
-                self.log.info('Finished task with ID: "{0}" with zoom-levels {1} Commiting to kafka.'
-                              .format(task_values["discrete_id"], task_values["zoom_levels"]))
-                consumer.commit()
+                success = self.execute_task(task_values)
+
+                if success:
+                    self.log.info('Finished task with ID: "{0}" with zoom-levels {1} Commiting to kafka.'
+                                .format(task_values["discrete_id"], task_values["zoom_levels"]))
+                    consumer.commit()
         except Exception as e:
             raise e
         finally:
@@ -50,7 +52,8 @@ class TaskHandler:
                 self.__worker.remove_s3_temp_files(discrete_id, zoom_levels)
             self.__worker.remove_vrt_file(discrete_id, zoom_levels)
 
+            return True
         except Exception as e:
             self.log.error('An error occured while processing task id "{0}" on zoom-levels {1} with error: {2}'
                            .format(discrete_id, zoom_levels, e))
-            raise e
+            return False
