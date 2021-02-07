@@ -5,7 +5,10 @@ from logger.jsonLogger import Logger
 from src.config import read_json
 from src.worker import Worker
 from model.enums.storage_provider import StorageProvider
+from model.enums.status_enum import StatusEnum
+import src.db_connector as db_connector
 import json
+import requests
 
 
 class TaskHandler:
@@ -26,14 +29,42 @@ class TaskHandler:
                                  partition_assignment_strategy=[RoundRobinPartitionAssignor])
         try:
             consumer.subscribe([self.__config['kafka']['topic']])
+            max_retries = self.__config['max_attempts']
+
             for task in consumer:
                 task_values = json.loads(task.value)
-                success = self.execute_task(task_values)
+                task_id = task_values["task_id"]
+                discrete_id =task_values["discrete_id"]
+                version = task_values["version"]
+                current_retry = db_connector.get_task_count(task_id)
+                success = False
 
-                if success:
-                    self.log.info('Finished task with ID: "{0}" with zoom-levels {1} Commiting to kafka.'
-                                .format(task_values["discrete_id"], task_values["zoom_levels"]))
-                    consumer.commit()
+                while (current_retry <= max_retries and not success):
+                    self.log.info('Processing task ID: {0} with discreteID "{1}", version: {2} and zoom-levels:{3}-{4}'
+                                .format(task_id,  discrete_id, version, 
+                                task_values["min_zoom_level"], task_values["max_zoom_level"]))
+                    
+                    success = self.execute_task(task_values)
+
+                    if success:
+                        self.log.info('Successfully finished taskID: {0} discreteID: "{1}", version: {2} with zoom-levels:{3}-{4}.'
+                                    .format(task_id, discrete_id, version, 
+                                            task_values["min_zoom_level"], task_values["max_zoom_level"]))
+                        update_body = { "status": StatusEnum.completed, "reason": "Task completed" }
+                        db_connector.update_task(task_id, update_body)
+
+                    else:
+                        self.log.error('Failed executing task with ID {0}, current attempt is: {1}'
+                                        .format(task_id, current_retry))               
+                        current_retry = current_retry + 1
+                        update_body = { "attempts": current_retry, "status": StatusEnum.failed }
+                        db_connector.update_task(task_id, update_body)
+
+
+                self.log.info('Comitting task from kafka with taskId: {0}, discreteID: {1}, version: {2}, zoom-levels: {3}-{4}'
+                                    .format(task_id, discrete_id, version,
+                                            task_values["min_zoom_level"], task_values["max_zoom_level"]))
+                consumer.commit()
         except Exception as e:
             raise e
         finally:
@@ -41,10 +72,12 @@ class TaskHandler:
 
     def execute_task(self, task_values):
         discrete_id = task_values["discrete_id"]
-        zoom_levels = task_values["zoom_levels"]
-        try:
-            self.log.info('Executing task {0} with zoom-levels {1}'.format(discrete_id, zoom_levels))
+        zoom_levels = '{0}-{1}'.format(task_values["min_zoom_level"], task_values["max_zoom_level"])
 
+        update_body = { "status": StatusEnum.in_progress }
+        db_connector.update_task(task_values['task_id'], update_body)        
+
+        try:
             self.__worker.buildvrt_utility(task_values)
             self.__worker.gdal2tiles_utility(task_values)
 
@@ -53,7 +86,9 @@ class TaskHandler:
             self.__worker.remove_vrt_file(discrete_id, zoom_levels)
 
             return True
-        except Exception as e:
+        except Exception as error:
             self.log.error('An error occured while processing task id "{0}" on zoom-levels {1} with error: {2}'
-                           .format(discrete_id, zoom_levels, e))
+                           .format(discrete_id, zoom_levels, error))
+            update_body = { 'reason': str(error) }
+            db_connector.update_task(task_values["task_id"], update_body)
             return False
