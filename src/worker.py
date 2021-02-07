@@ -73,7 +73,7 @@ class Worker:
             'zoom': zoom_levels
         }
 
-        tiles_path = '{0}/{1}'.format(self.tiles_folder_location, discrete_id)
+        tiles_path = '{0}/{1}/{2}'.format(self.tiles_folder_location, discrete_id, version)
 
         self.log.info("Starting process GDAL2TILES on taskID: {0} discreteID: {1}, version: {2} and zoom-levels: {3}"
                             .format(task_id, discrete_id, version, zoom_levels))
