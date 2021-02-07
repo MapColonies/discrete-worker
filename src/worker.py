@@ -34,6 +34,10 @@ class Worker:
         self.log.info('Removing folder {0} on ID {1} with zoom-levels {2}'.format(tiles_location, discrete_id, zoom_levels))
         shutil.rmtree(tiles_location)
 
+    def validate_data(self, task_values):
+        if (task_values['min_zoom_level'] > task_values['max_zoom_level']):
+            raise ValueError('Minimum zoom level cannot be greater than maximum zoom level')
+
 
     def buildvrt_utility(self, task_values):
         zoom_levels = '{0}-{1}'.format(task_values["min_zoom_level"], task_values["max_zoom_level"])

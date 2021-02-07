@@ -17,7 +17,7 @@ request_session.headers.update({'Content-Type': "application/json", 'Accept': "a
 
 def update_task(task_id, payload):
     update_url = '{0}/task/{1}'.format(storage_url, task_id)
-    log.info('Updating DB with task {0} with data {1}'.format(task_id, str(payload)))
+    log.info('Updating DB on taskID {0} with data {1}'.format(task_id, str(payload)))
     return request_session.put(url=update_url, data=json.dumps(payload))
 
 def get_task_count(task_id):

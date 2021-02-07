@@ -43,22 +43,24 @@ class TaskHandler:
                     self.log.info('Processing task ID: {0} with discreteID "{1}", version: {2} and zoom-levels:{3}-{4}'
                                 .format(task_id,  discrete_id, version, 
                                 task_values["min_zoom_level"], task_values["max_zoom_level"]))
-                    
-                    success = self.execute_task(task_values)
+
+                    update_body = { "status": StatusEnum.in_progress, "attempts": current_retry }
+                    db_connector.update_task(task_values['task_id'], update_body)                    
+                    success, reason = self.execute_task(task_values)
 
                     if success:
                         self.log.info('Successfully finished taskID: {0} discreteID: "{1}", version: {2} with zoom-levels:{3}-{4}.'
                                     .format(task_id, discrete_id, version, 
                                             task_values["min_zoom_level"], task_values["max_zoom_level"]))
-                        update_body = { "status": StatusEnum.completed, "reason": "Task completed" }
+                        update_body = { "status": StatusEnum.completed, "reason": reason }
                         db_connector.update_task(task_id, update_body)
 
                     else:
                         self.log.error('Failed executing task with ID {0}, current attempt is: {1}'
-                                        .format(task_id, current_retry))               
-                        current_retry = current_retry + 1
-                        update_body = { "attempts": current_retry, "status": StatusEnum.failed }
+                                        .format(task_id, current_retry))        
+                        update_body = { "status": StatusEnum.failed, "reason": reason }
                         db_connector.update_task(task_id, update_body)
+                        current_retry = current_retry + 1
 
 
                 self.log.info('Comitting task from kafka with taskId: {0}, discreteID: {1}, version: {2}, zoom-levels: {3}-{4}'
@@ -74,10 +76,8 @@ class TaskHandler:
         discrete_id = task_values["discrete_id"]
         zoom_levels = '{0}-{1}'.format(task_values["min_zoom_level"], task_values["max_zoom_level"])
 
-        update_body = { "status": StatusEnum.in_progress }
-        db_connector.update_task(task_values['task_id'], update_body)        
-
         try:
+            self.__worker.validate_data(task_values)
             self.__worker.buildvrt_utility(task_values)
             self.__worker.gdal2tiles_utility(task_values)
 
@@ -85,10 +85,9 @@ class TaskHandler:
                 self.__worker.remove_s3_temp_files(discrete_id, zoom_levels)
             self.__worker.remove_vrt_file(discrete_id, zoom_levels)
 
-            return True
+            success_reason = "Task Completed"
+            return True, success_reason
         except Exception as error:
             self.log.error('An error occured while processing task id "{0}" on zoom-levels {1} with error: {2}'
                            .format(discrete_id, zoom_levels, error))
-            update_body = { 'reason': str(error) }
-            db_connector.update_task(task_values["task_id"], update_body)
-            return False
+            return False, str(error)
