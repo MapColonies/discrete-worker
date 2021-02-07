@@ -5,6 +5,7 @@ from config import read_json
 from gdal2tiles import generate_tiles
 from utilities import get_tiles_location
 from errors.vrt_errors import VRTError
+import src.db_connector as db_connector
 import worker_constants
 import requests
 import shutil
@@ -35,9 +36,12 @@ class Worker:
 
 
     def buildvrt_utility(self, task_values):
-        key = task_values["discrete_id"]
-        get_discrete_by_id_url = '{0}/{1}'.format(self.__config["discrete_storage"]["url"], key)
-        discrete_layer = requests.get(url=get_discrete_by_id_url).json()
+        zoom_levels = '{0}-{1}'.format(task_values["min_zoom_level"], task_values["max_zoom_level"])
+        discrete_id = task_values["discrete_id"]
+        task_id = task_values["task_id"]
+        version = task_values["version"]
+        
+        discrete_layer = db_connector.get_discrete_layer(discrete_id, version)
 
         vrt_config = {
             'VRTNodata': self.__config["gdal"]["vrt"]["no_data"],
@@ -45,8 +49,9 @@ class Worker:
             'resampleAlg': self.__config["gdal"]["vrt"]["resample_algo"]
         }
 
-        self.log.info("Starting process GDAL-BUILD-VRT on ID: {0} and zoom-levels {1}".format(key, task_values["zoom_levels"]))
-        vrt_result = gdal.BuildVRT(self.vrt_file_location(key), discrete_layer["tiffs"], **vrt_config)
+        self.log.info("Starting process GDAL-BUILD-VRT on taskID: {0} discreteID: {1}, version: {2} and zoom-levels: {3}"
+                        .format(task_id, discrete_id, version, zoom_levels))
+        vrt_result = gdal.BuildVRT(self.vrt_file_location(discrete_id), discrete_layer["metadata"]["tiffs"], **vrt_config)
 
         if vrt_result != None:
             vrt_result.FlushCache()
@@ -56,17 +61,20 @@ class Worker:
 
 
     def gdal2tiles_utility(self, task_values):
-        zoom_levels = task_values["zoom_levels"]
-        key = task_values["discrete_id"]
+        zoom_levels = '{0}-{1}'.format(task_values["min_zoom_level"], task_values["max_zoom_level"])
+        discrete_id = task_values["discrete_id"]
+        task_id = task_values["task_id"]
+        version = task_values["version"]
 
         options = {
             'resampling': 'bilinear',
             'tmscompatible': True,
             'profile': 'geodetic',
-            'zoom': '{0}-{1}'.format(zoom_levels[0], zoom_levels[len(zoom_levels)-1])
+            'zoom': zoom_levels
         }
 
-        tiles_path = '{0}/{1}'.format(self.tiles_folder_location, key)
+        tiles_path = '{0}/{1}'.format(self.tiles_folder_location, discrete_id)
 
-        self.log.info("Starting process GDAL2TILES on ID: {0}, and zoom-levels: {1}".format(key, task_values["zoom_levels"]))
-        generate_tiles(self.vrt_file_location(key), tiles_path, **options)
+        self.log.info("Starting process GDAL2TILES on taskID: {0} discreteID: {1}, version: {2} and zoom-levels: {3}"
+                            .format(task_id, discrete_id, version, zoom_levels))
+        generate_tiles(self.vrt_file_location(discrete_id), tiles_path, **options)
