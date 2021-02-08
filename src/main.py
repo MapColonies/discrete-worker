@@ -1,4 +1,3 @@
-from os import path
 from src.worker import Worker
 from logger.jsonLogger import Logger
 from src.config import Config

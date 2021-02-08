@@ -1,4 +1,3 @@
-from os import path
 from MapColoniesJSONLogger.logger import generate_logger
 from src.config import Config
 
