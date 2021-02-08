@@ -1,13 +1,11 @@
 from logger.jsonLogger import Logger
 from os import path, makedirs
-from src.config import read_json
+from src.config import Config
 from osgeo import gdal
 from model.enums.storage_provider import StorageProvider
 
-# Read config file
-current_dir_path = path.dirname(__file__)
-config_path = path.join(current_dir_path, '../config/production.json')
-config = read_json(config_path)
+# Define config file
+config = Config.get_config_instance()
 
 # Define logger
 log = Logger.get_logger_instance()

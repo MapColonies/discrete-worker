@@ -1,7 +1,7 @@
 from os import path
 from src.worker import Worker
 from logger.jsonLogger import Logger
-from src.config import read_json
+from src.config import Config
 import src.probe as probe
 from src.task_handler import TaskHandler
 import threading
@@ -12,9 +12,7 @@ from model.enums.storage_provider import StorageProvider
 
 class Main:
     def __init__(self):
-        current_dir_path = path.dirname(__file__)
-        config_path = path.join(current_dir_path, '../config/production.json')
-        self.__config = read_json(config_path)
+        self.__config = Config.get_config_instance()
         self.__task_handler = TaskHandler()
 
         self.log = Logger.get_logger_instance()

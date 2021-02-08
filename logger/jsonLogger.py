@@ -1,12 +1,8 @@
 from os import path
 from MapColoniesJSONLogger.logger import generate_logger
-from src.config import read_json
+from src.config import Config
 
-current_dir_path = path.dirname(__file__)
-config_path = path.join(current_dir_path, '../config/production.json')
-config = read_json(config_path)
-
-
+config = Config.get_config_instance()
 class Logger:
     instance = None
 

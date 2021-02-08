@@ -1,17 +1,14 @@
-from src.config import read_json
+
+from src.config import Config
 from logger.jsonLogger import Logger
 from os import path
 import requests
 import json
 
-current_dir_path = path.dirname(__file__)
-config_path = path.join(current_dir_path, '../config/production.json')
-config = read_json(config_path)
-
 log = Logger.get_logger_instance()
+config = Config.get_config_instance()
 
 storage_url = config['discrete_storage']['url']
-
 request_session = requests.Session()
 request_session.headers.update({'Content-Type': "application/json", 'Accept': "application/json"})
 

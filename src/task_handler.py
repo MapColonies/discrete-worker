@@ -2,7 +2,7 @@ from os import path
 from kafka import KafkaConsumer, BrokerConnection
 from kafka.coordinator.assignors.roundrobin import RoundRobinPartitionAssignor
 from logger.jsonLogger import Logger
-from src.config import read_json
+from src.config import Config
 from src.worker import Worker
 from model.enums.storage_provider import StorageProvider
 from model.enums.status_enum import StatusEnum
@@ -14,9 +14,7 @@ import requests
 class TaskHandler:
     def __init__(self):
         self.log = Logger.get_logger_instance()
-        config_path = path.join(path.dirname(__file__),
-                                '../config/production.json')
-        self.__config = read_json(config_path)
+        self.__config = Config.get_config_instance()
         self.__worker = Worker()
 
     def handle_tasks(self):
