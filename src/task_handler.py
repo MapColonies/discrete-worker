@@ -33,9 +33,9 @@ class TaskHandler:
 
             for task in consumer:
                 task_values = json.loads(task.value)
-                valid, reason = utilities.validate_data(task_values)
+                is_valid, reason = utilities.validate_data(task_values)
 
-                if not valid:
+                if not is_valid:
                     update_body = { "status": StatusEnum.failed, "reason": reason }
                     db_connector.update_task(update_body, update_body)
                     self.log.error("Validation error - could not process request. Comitting from queue")
