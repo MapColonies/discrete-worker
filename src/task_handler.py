@@ -35,15 +35,15 @@ class TaskHandler:
                     update_body = { "status": StatusEnum.failed, "reason": reason }
                     request_connector.update_task(update_body, update_body)
                     self.log.error("Validation error - could not process request. Comitting from queue")
-                    consumer.commit()
-                    continue
                 
-                self.do_task_loop(task_values)
-                request_connector.post_end_process(task_values['discrete_id'], task_values['version'])
+                else:
+                    self.do_task_loop(task_values)
             
                 self.log.info('Comitting task from kafka with taskId: {0}, discreteID: {1}, version: {2}, zoom-levels: {3}-{4}'
                             .format(task_values['task_id'], task_values['discrete_id'], task_values['version'],
-                                    task_values["min_zoom_level"], task_values["max_zoom_level"]))            
+                                    task_values["min_zoom_level"], task_values["max_zoom_level"]))
+
+                request_connector.post_end_process(task_values['discrete_id'], task_values['version'])
                 consumer.commit()
         except Exception as e:
             raise e
