@@ -6,6 +6,7 @@ from src.worker import Worker
 from model.enums.storage_provider import StorageProvider
 from model.enums.status_enum import StatusEnum
 import src.db_connector as db_connector
+import src.utilities as utilities
 import json
 import requests
 
@@ -26,55 +27,60 @@ class TaskHandler:
                                  partition_assignment_strategy=[RoundRobinPartitionAssignor])
         try:
             consumer.subscribe([self.__config['kafka']['topic']])
-            max_retries = self.__config['max_attempts']
 
             for task in consumer:
                 task_values = json.loads(task.value)
-                task_id = task_values["task_id"]
-                discrete_id =task_values["discrete_id"]
-                version = task_values["version"]
-                current_retry = db_connector.get_task_count(task_id)
-                success = False
+                is_valid, reason = utilities.validate_data(task_values)
 
-                while (current_retry <= max_retries and not success):
-                    self.log.info('Processing task ID: {0} with discreteID "{1}", version: {2} and zoom-levels:{3}-{4}'
-                                .format(task_id,  discrete_id, version, 
-                                task_values["min_zoom_level"], task_values["max_zoom_level"]))
-
-                    update_body = { "status": StatusEnum.in_progress, "attempts": current_retry }
-                    db_connector.update_task(task_values['task_id'], update_body)                    
-                    success, reason = self.execute_task(task_values)
-
-                    if success:
-                        self.log.info('Successfully finished taskID: {0} discreteID: "{1}", version: {2} with zoom-levels:{3}-{4}.'
-                                    .format(task_id, discrete_id, version, 
-                                            task_values["min_zoom_level"], task_values["max_zoom_level"]))
-                        update_body = { "status": StatusEnum.completed, "reason": reason }
-                        db_connector.update_task(task_id, update_body)
-
-                    else:
-                        self.log.error('Failed executing task with ID {0}, current attempt is: {1}'
-                                        .format(task_id, current_retry))        
-                        update_body = { "status": StatusEnum.failed, "reason": reason }
-                        db_connector.update_task(task_id, update_body)
-                        current_retry = current_retry + 1
-
-
+                if not is_valid:
+                    update_body = { "status": StatusEnum.failed, "reason": reason }
+                    db_connector.update_task(update_body, update_body)
+                    self.log.error("Validation error - could not process request. Comitting from queue")
+                    consumer.commit()
+                    continue
+                
+                self.do_task_loop(task_values)
+            
                 self.log.info('Comitting task from kafka with taskId: {0}, discreteID: {1}, version: {2}, zoom-levels: {3}-{4}'
-                                    .format(task_id, discrete_id, version,
-                                            task_values["min_zoom_level"], task_values["max_zoom_level"]))
+                            .format(task_values['task_id'], task_values['discrete_id'], task_values['version'],
+                                    task_values["min_zoom_level"], task_values["max_zoom_level"]))            
                 consumer.commit()
         except Exception as e:
             raise e
         finally:
             consumer.close()
 
+    def do_task_loop(self, task_values):
+        task_id = task_values["task_id"]
+        discrete_id = task_values["discrete_id"]
+        version = task_values["version"]
+        max_retries = self.__config['max_attempts']
+
+        current_retry = db_connector.get_task_count(task_id)
+        success = False
+
+        while (current_retry <= max_retries and not success):
+            update_body = { "status": StatusEnum.in_progress, "attempts": current_retry }
+            db_connector.update_task(task_id, update_body)
+            success, reason = self.execute_task(task_values)
+
+            if success:
+                self.log.info('Successfully finished taskID: {0} discreteID: "{1}", version: {2} with zoom-levels:{3}-{4}.'
+                            .format(task_id, discrete_id, version, 
+                                    task_values["min_zoom_level"], task_values["max_zoom_level"]))
+            else:
+                self.log.error('Failed executing task with ID {0}, current attempt is: {1}'
+                                .format(task_id, current_retry))        
+
+            update_body = { "status": StatusEnum.completed if success else StatusEnum.failed, "reason": reason }
+            db_connector.update_task(task_id, update_body)
+            current_retry = current_retry + 1
+
     def execute_task(self, task_values):
         discrete_id = task_values["discrete_id"]
         zoom_levels = '{0}-{1}'.format(task_values["min_zoom_level"], task_values["max_zoom_level"])
 
         try:
-            self.__worker.validate_data(task_values)
             self.__worker.buildvrt_utility(task_values)
             self.__worker.gdal2tiles_utility(task_values)
 

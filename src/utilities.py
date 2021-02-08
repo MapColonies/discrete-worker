@@ -47,3 +47,16 @@ def get_tiles_location():
             tiles_location_instance = s3_path
 
     return tiles_location_instance
+
+def validate_data(task_values):
+    task_fields = config['mandatory_task_fields']
+    for field in task_fields:
+        if field not in task_values:
+            reason = 'Missing field "{0}"'.format(field)
+            return False, reason
+
+    if (task_values['min_zoom_level'] > task_values['max_zoom_level']):
+        reason = 'Minimum zoom level cannot be greater than maximum zoom level'
+        return False, reason
+    
+    return True, ""
