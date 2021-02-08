@@ -1,4 +1,3 @@
-
 from src.config import Config
 from logger.jsonLogger import Logger
 from os import path
