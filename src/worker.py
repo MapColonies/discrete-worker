@@ -1,22 +1,19 @@
 from osgeo import gdal, ogr
 from os import path, remove as remove_file
 from logger.jsonLogger import Logger
-from config import read_json
+from config import Config
 from gdal2tiles import generate_tiles
 from utilities import get_tiles_location
 from errors.vrt_errors import VRTError
-import src.db_connector as db_connector
+import src.request_connector as request_connector
 import constants
 import requests
 import shutil
 
-
 class Worker:
     def __init__(self):
         self.log = Logger.get_logger_instance()
-        config_path = path.join(path.dirname(__file__),
-                                '../config/production.json')
-        self.__config = read_json(config_path)
+        self.__config = Config.get_config_instance()
         self.tiles_folder_location = get_tiles_location()
 
     def vrt_file_location(self, discrete_id):
@@ -40,7 +37,7 @@ class Worker:
         task_id = task_values["task_id"]
         version = task_values["version"]
         
-        discrete_layer = db_connector.get_discrete_layer(discrete_id, version)
+        discrete_layer = request_connector.get_discrete_layer(discrete_id, version)
 
         vrt_config = {
             'VRTNodata': self.__config["gdal"]["vrt"]["no_data"],

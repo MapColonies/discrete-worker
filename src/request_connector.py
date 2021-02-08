@@ -26,3 +26,8 @@ def get_discrete_layer(discrete_id, version):
     get_discrete_by_id_url = '{0}/discrete/{1}/{2}'.format(config["discrete_storage"]["url"], discrete_id, version)
     log.info('Retrieving discrete layer with id {0}'.format(discrete_id))
     return request_session.get(get_discrete_by_id_url).json()
+
+def post_end_process(discrete_id, version):
+    post_to_overseer_url = '{0}/{1}/{2}/completed'.format(config["overseer"]["url"], discrete_id, version)
+    log.info('Notifying to overseer that task\'s completed in path {0}'.format(post_to_overseer_url))
+    request_session.post(url=post_to_overseer_url)
