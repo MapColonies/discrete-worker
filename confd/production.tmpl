@@ -16,6 +16,9 @@
     "discrete_storage": {
         "url": "{{ getv "/configuration/discrete/worker/discrete/storage/url" "http://127.0.0.1:8080" }}"
     },
+    "overseer": {
+        "url": "{{ getv "/configuration/discrete/worker/overseer/url" "http://127.0.0.1:8081" }}"
+    },
     "gdal": {
         "multithread": {{ getv "/configuration/discrete/worker/gdal/multithread" "true" }},
         "thread_count": {{ getv "/configuration/discrete/worker/gdal/thread/count" "-1" }},

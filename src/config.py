@@ -1,6 +1,7 @@
 import json
 from os import path
 import constants
+
 class Config:
     instance = None
 
@@ -21,10 +22,8 @@ class Config:
 
                 if path.exists(production_config_path):
                     Config.instance = Config.read_json(production_config_path)
-                    print('Using production config file')
                 elif path.exists(default_config_path):
                     Config.instance = Config.read_json(default_config_path)
-                    print('Using default config file')
                 else:
                     raise FileNotFoundError("Configure file not found")
 

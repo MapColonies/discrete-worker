@@ -5,11 +5,10 @@ from src.config import Config
 from src.worker import Worker
 from model.enums.storage_provider import StorageProvider
 from model.enums.status_enum import StatusEnum
-import src.db_connector as db_connector
+import src.request_connector as request_connector
 import src.utilities as utilities
 import json
 import requests
-
 
 class TaskHandler:
     def __init__(self):
@@ -34,12 +33,13 @@ class TaskHandler:
 
                 if not is_valid:
                     update_body = { "status": StatusEnum.failed, "reason": reason }
-                    db_connector.update_task(update_body, update_body)
+                    request_connector.update_task(update_body, update_body)
                     self.log.error("Validation error - could not process request. Comitting from queue")
                     consumer.commit()
                     continue
                 
                 self.do_task_loop(task_values)
+                request_connector.post_end_process(task_values['discrete_id'], task_values['version'])
             
                 self.log.info('Comitting task from kafka with taskId: {0}, discreteID: {1}, version: {2}, zoom-levels: {3}-{4}'
                             .format(task_values['task_id'], task_values['discrete_id'], task_values['version'],
@@ -56,12 +56,13 @@ class TaskHandler:
         version = task_values["version"]
         max_retries = self.__config['max_attempts']
 
-        current_retry = db_connector.get_task_count(task_id)
+        current_retry = request_connector.get_task_count(task_id)
         success = False
 
-        while (current_retry <= max_retries and not success):
+        while (current_retry < max_retries and not success):
+            current_retry = current_retry + 1
             update_body = { "status": StatusEnum.in_progress, "attempts": current_retry }
-            db_connector.update_task(task_id, update_body)
+            request_connector.update_task(task_id, update_body)
             success, reason = self.execute_task(task_values)
 
             if success:
@@ -73,8 +74,7 @@ class TaskHandler:
                                 .format(task_id, current_retry))        
 
             update_body = { "status": StatusEnum.completed if success else StatusEnum.failed, "reason": reason }
-            db_connector.update_task(task_id, update_body)
-            current_retry = current_retry + 1
+            request_connector.update_task(task_id, update_body)
 
     def execute_task(self, task_values):
         discrete_id = task_values["discrete_id"]

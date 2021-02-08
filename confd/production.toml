@@ -13,6 +13,7 @@ keys = [
     "/configuration/discrete/worker/logger/path",
     "/configuration/discrete/worker/logger/output",
     "/configuration/discrete/worker/discrete/storage/url",
+    "/configuration/discrete/worker/overseer/url",
     "/configuration/discrete/worker/gdal/multithread",
     "/configuration/discrete/worker/gdal/thread/count",
     "/configuration/discrete/worker/gdal/vrt/no/data",
