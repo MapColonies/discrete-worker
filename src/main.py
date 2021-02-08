@@ -5,7 +5,7 @@ from src.config import Config
 import src.probe as probe
 from src.task_handler import TaskHandler
 import threading
-import worker_constants
+import constants
 from utilities import create_folder, set_gdal_s3
 from model.enums.storage_provider import StorageProvider
 
@@ -23,10 +23,10 @@ class Main:
         self.log.info('Service is listening to broker: {0}, topic: {1}'.format(self.__config["kafka"]["host_ip"], self.__config["kafka"]["topic"]))
         storage_provider = self.__config['storage_provider'].upper()
         try:
-            create_folder(worker_constants.VRT_OUTPUT_FOLDER_NAME)
+            create_folder(constants.VRT_OUTPUT_FOLDER_NAME)
 
             if (storage_provider == StorageProvider.FS):
-                create_folder(worker_constants.TILES_OUTPUT_FOLDER_NAME)
+                create_folder(constants.TILES_OUTPUT_FOLDER_NAME)
 
             elif (storage_provider == StorageProvider.S3):
                 set_gdal_s3()

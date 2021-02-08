@@ -6,7 +6,7 @@ from gdal2tiles import generate_tiles
 from utilities import get_tiles_location
 from errors.vrt_errors import VRTError
 import src.db_connector as db_connector
-import worker_constants
+import constants
 import requests
 import shutil
 
@@ -21,7 +21,7 @@ class Worker:
 
     def vrt_file_location(self, discrete_id):
         output_file_name = '{0}.vrt'.format(discrete_id)
-        output_path = path.join(worker_constants.VRT_OUTPUT_FOLDER_NAME, output_file_name) 
+        output_path = path.join(constants.VRT_OUTPUT_FOLDER_NAME, output_file_name) 
         return output_path
 
     def remove_vrt_file(self, discrete_id, zoom_levels):

@@ -1,6 +1,7 @@
 from logger.jsonLogger import Logger
 from os import path, makedirs
 from src.config import Config
+from src.config import read_json
 from osgeo import gdal
 from model.enums.storage_provider import StorageProvider
 

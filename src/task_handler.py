@@ -3,6 +3,7 @@ from kafka import KafkaConsumer, BrokerConnection
 from kafka.coordinator.assignors.roundrobin import RoundRobinPartitionAssignor
 from logger.jsonLogger import Logger
 from src.config import Config
+from src.config import read_json
 from src.worker import Worker
 from model.enums.storage_provider import StorageProvider
 from model.enums.status_enum import StatusEnum

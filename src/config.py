@@ -1,5 +1,6 @@
 import json
 from os import path
+import constants
 
 def read_json(json_path):
     try:
@@ -27,15 +28,15 @@ class Config:
             return Config.instance
         else:
             try:
-                production_config_path = './config/production.json'
-                default_config_path = './config/default.json'
+                production_config_path = constants.PRODUCTION_CONFIG_PATH
+                default_config_path = constants.DEFAULT_CONFIG_PATH
 
                 if path.exists(production_config_path):
                     Config.instance = Config.read_json_2(production_config_path)
-                    print('Production config file was not found in path %s' % production_config_path)
+                    print('Using production config file')
                 elif path.exists(default_config_path):
                     Config.instance = Config.read_json_2(default_config_path)
-                    print('Default config file was not found in path %s' % default_config_path)
+                    print('Using default config file')
                 else:
                     raise FileNotFoundError("Configure file not found")
 
