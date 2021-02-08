@@ -14,7 +14,6 @@ class Main:
     def __init__(self):
         self.__config = Config.get_config_instance()
         self.__task_handler = TaskHandler()
-
         self.log = Logger.get_logger_instance()
         probe.readiness = True
         probe.liveness = True
