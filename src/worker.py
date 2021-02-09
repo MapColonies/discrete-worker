@@ -47,7 +47,7 @@ class Worker:
 
         self.log.info("Starting process GDAL-BUILD-VRT on taskID: {0} discreteID: {1}, version: {2} and zoom-levels: {3}"
                         .format(task_id, discrete_id, version, zoom_levels))
-        vrt_result = gdal.BuildVRT(self.vrt_file_location(discrete_id), discrete_layer["metadata"]["tiffs"], **vrt_config)
+        vrt_result = gdal.BuildVRT(self.vrt_file_location(discrete_id), discrete_layer["metadata"]["fileUris"], **vrt_config)
 
         if vrt_result != None:
             vrt_result.FlushCache()

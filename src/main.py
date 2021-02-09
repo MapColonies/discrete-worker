@@ -24,7 +24,8 @@ class Main:
             create_folder(constants.VRT_OUTPUT_FOLDER_NAME)
 
             if (storage_provider == StorageProvider.FS):
-                create_folder(constants.TILES_OUTPUT_FOLDER_NAME)
+                tiles_output_folder = self.__config['fs']['internal_outputs_path']
+                create_folder(tiles_output_folder)
 
             elif (storage_provider == StorageProvider.S3):
                 set_gdal_s3()

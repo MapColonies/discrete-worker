@@ -1,9 +1,20 @@
-schema = {
+discrete_schema = {
     "type": "object",
     "properties": {
-        "discrete_id": {"type": "string"},
+        "id": {"type": "string"},
         "version": {"type": "string"},
-        "task_id": {"type": "string"},
-        "metadata": {"type": "object"} # tiffs array stored inside this object
+        "tasks": {"type": "array"},
+        "metadata": {"type": "object"}
+    }
+}
+
+task_schema = {
+    "type": "object",
+    "properties": {
+        "id": {"type": "string"},
+        "status": {"type": "string"},
+        "reason": {"type": "number"},
+        "minZoom": {"type": "number"},
+        "maxZoom": {"type": "number"}
     }
 }
