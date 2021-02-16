@@ -13,7 +13,7 @@ keys = [
     "/configuration/discrete/worker/kafka/ssl/certfile",
     "/configuration/discrete/worker/kafka/ssl/certfile",
     "/configuration/discrete/worker/kafka/ssl/keyfile",
-    "/configuration/discrete/worker/kafka/ssl/password"
+    "/configuration/discrete/worker/kafka/ssl/password",
     "/configuration/discrete/worker/logger/type",
     "/configuration/discrete/worker/logger/level",
     "/configuration/discrete/worker/logger/path",
