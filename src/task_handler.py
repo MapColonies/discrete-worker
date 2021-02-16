@@ -23,6 +23,11 @@ class TaskHandler:
                                  max_poll_records=self.__config['kafka']['poll_records'],
                                  auto_offset_reset=self.__config['kafka']['offset_reset'],
                                  group_id=self.__config['kafka']['group_id'],
+                                 ssl_context=self.__config['kafka']['ssl_context'],
+                                 ssl_cafile=self.__config['kafka']['ssl_cafile'],
+                                 ssl_certfile=self.__config['kafka']['ssl_certfile'],
+                                 ssl_keyfile=self.__config['kafka']['ssl_keyfile'],
+                                 ssl_password=self.__config['kafka']['ssl_password'],
                                  partition_assignment_strategy=[RoundRobinPartitionAssignor])
         try:
             consumer.subscribe([self.__config['kafka']['topic']])
@@ -40,13 +45,13 @@ class TaskHandler:
                         self.log.error("Validation error - could not process request and could not save status to DB. Comitting from queue")
                     consumer.commit()
                     continue
-                
+
                 self.do_task_loop(task_values)
                 request_connector.post_end_process(task_values['discrete_id'], task_values['version'])
-            
+
                 self.log.info('Comitting task from kafka with taskId: {0}, discreteID: {1}, version: {2}, zoom-levels: {3}-{4}'
-                            .format(task_values['task_id'], task_values['discrete_id'], task_values['version'],
-                                    task_values["min_zoom_level"], task_values["max_zoom_level"]))            
+                              .format(task_values['task_id'], task_values['discrete_id'], task_values['version'],
+                                      task_values["min_zoom_level"], task_values["max_zoom_level"]))
                 consumer.commit()
         except Exception as e:
             raise e
@@ -70,11 +75,11 @@ class TaskHandler:
 
             if success:
                 self.log.info('Successfully finished taskID: {0} discreteID: "{1}", version: {2} with zoom-levels:{3}-{4}.'
-                            .format(task_id, discrete_id, version, 
-                                    task_values["min_zoom_level"], task_values["max_zoom_level"]))
+                              .format(task_id, discrete_id, version,
+                                      task_values["min_zoom_level"], task_values["max_zoom_level"]))
             else:
                 self.log.error('Failed executing task with ID {0}, current attempt is: {1}'
-                                .format(task_id, current_retry))        
+                               .format(task_id, current_retry))
 
             update_body = { "status": StatusEnum.completed if success else StatusEnum.failed, "reason": reason }
             request_connector.update_task(task_id, update_body)
