@@ -5,7 +5,12 @@
         "group_id": "{{ getv "/configuration/discrete/worker/kafka/group/id" "task_group_1" }}",
         "offset_reset": "{{ getv "/configuration/discrete/worker/kafka/offest/reset" "earliest" }}",
         "poll_timeout_milliseconds": {{ getv "/configuration/discrete/worker/kafka/poll/timeout/milliseconds" "270000000" }},
-        "poll_records": {{ getv "/configuration/discrete/worker/kafka/poll/records" "1" }}
+        "poll_records": {{ getv "/configuration/discrete/worker/kafka/poll/records" "1" }},
+        "ssl_context": "{{ getv "/configuration/discrete/worker/kafka/ssl/context" "PLAINTEXT" }}",
+        "ssl_cafile": {{ getv "/configuration/discrete/worker/kafka/ssl/cafile" "null" }},
+        "ssl_certfile": {{ getv "/configuration/discrete/worker/kafka/ssl/certfile" "null" }},
+        "ssl_keyfile": {{ getv "/configuration/discrete/worker/kafka/ssl/keyfile" "null" }},
+        "ssl_password": {{ getv "/configuration/discrete/worker/kafka/ssl/password" "null" }}
     },
     "logger": {
         "type": "{{ getv "/configuration/discrete/worker/logger/type" "stream" }}",
@@ -37,7 +42,6 @@
         "access_key_id": "{{ getv "/configuration/discrete/worker/s3/access/key/id" "minioadmin" }}",
         "secret_access_key": "{{ getv "/configuration/discrete/worker/s3/secret/access/key" "minioadmin" }}",
         "bucket": "{{ getv "/configuration/discrete/worker/s3/bucket" "mapping-images" }}",
-        "download_expired_time": {{ getv "/configuration/discrete/worker/s3/download/expired/time" "604800" }},
         "ssl_enabled": "{{ getv "/configuration/discrete/worker/s3/ssl/enabled" "NO" }}",
         "virtual_hosting": "{{ getv "/configuration/discrete/worker/s3/virtual/hosting" "NO" }}"
     },
