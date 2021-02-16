@@ -11,7 +11,6 @@ keys = [
     "/configuration/discrete/worker/kafka/ssl/context",
     "/configuration/discrete/worker/kafka/ssl/cafile",
     "/configuration/discrete/worker/kafka/ssl/certfile",
-    "/configuration/discrete/worker/kafka/ssl/certfile",
     "/configuration/discrete/worker/kafka/ssl/keyfile",
     "/configuration/discrete/worker/kafka/ssl/password",
     "/configuration/discrete/worker/logger/type",
