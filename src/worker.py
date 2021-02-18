@@ -63,9 +63,10 @@ class Worker:
         version = task_values["version"]
 
         options = {
-            'resampling': 'bilinear',
-            'tmscompatible': True,
-            'profile': 'geodetic',
+            'resampling': self.__config['gdal']['resampling'],
+            'tmscompatible': self.__config['gdal']['tms_compatible'],
+            'profile': self.__config['gdal']['profile'],
+            'nb_processes': self.__config['gdal']['process_count'],
             'zoom': zoom_levels
         }
 
