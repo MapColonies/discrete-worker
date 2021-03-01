@@ -27,7 +27,7 @@
     "gdal": {
         "process_count": {{ getv "/configuration/discrete/worker/gdal/process/count" "1" }},
         "resampling": "{{ getv "/configuration/discrete/worker/gdal/resampling" "bilinear" }}",
-        "tms_compatible": {{ getv "/configuration/discrete/worker/gdal/tms/compatible" "True" }},
+        "tms_compatible": {{ getv "/configuration/discrete/worker/gdal/tms/compatible" "true" }},
         "profile": "{{ getv "/configuration/discrete/worker/gdal/profile" "geodetic"}}",
         "vrt": {
             "no_data": "{{ getv "/configuration/discrete/worker/gdal/vrt/no/data" "0" }}",
