@@ -53,6 +53,7 @@ class TaskHandler:
                 version = task_values["version"]
                 min_zoom_level = task_values["min_zoom_level"]
                 max_zoom_level = task_values["max_zoom_level"]
+                # todo: integrate with new overseer API - pass jobID and taskID
                 request_connector.post_end_process(discrete_id, version)
                 self.log.info('Comitting task from kafka with jobId: {0}, taskId: {1}, discreteID: {2}, version: {3}, zoom-levels: {4}-{5}'
                               .format(job_id, task_id, discrete_id, version, min_zoom_level, max_zoom_level))
@@ -79,7 +80,7 @@ class TaskHandler:
             current_retry = current_retry + 1
             update_body = { "status": StatusEnum.in_progress, "attempts": current_retry }
             request_connector.update_task(job_id, task_id, update_body)
-            success, reason = self.execute_task(job_id, task_id, discrete_id, zoom_levels, task_values)
+            success, reason = self.execute_task(job_id, task_id, discrete_id, zoom_levels)
 
             if success:
                 self.log.info('Successfully finished jobID: {0}, taskID: {1}, discreteID: {2}, version: {3} with zoom-levels: {4}.'
@@ -91,7 +92,7 @@ class TaskHandler:
             update_body = { "status": StatusEnum.completed if success else StatusEnum.failed, "reason": reason }
             request_connector.update_task(job_id, task_id, update_body)
 
-    def execute_task(self, job_id, task_id, discrete_id, zoom_levels, task_values):
+    def execute_task(self, job_id, task_id, discrete_id, zoom_levels):
 
         try:
             self.__worker.buildvrt_utility(job_id, task_id, discrete_id, version, zoom_levels))

@@ -38,9 +38,6 @@ class Worker:
             raise VRTError("jobData didn't have fileUris field, for jobID: {0} taskID: {1} discreteID: {2}, version: {3} jobData: {4}"
             .format(job_id, task_id, discrete_id, version, job_data))
 
-        job_parameters = job_data["parameters"] && 
-        job_file_uri = job_data["parameters"]["fileUris"]
-
         vrt_config = {
             'VRTNodata': self.__config["gdal"]["vrt"]["no_data"],
             'outputSRS': self.__config["gdal"]["vrt"]["output_srs"],
@@ -49,7 +46,7 @@ class Worker:
 
         self.log.info("Starting process GDAL-BUILD-VRT on jobID: {0} taskID: {1} discreteID: {2}, version: {3} and zoom-levels: {4}"
                         .format(job_id, task_id, discrete_id, version, zoom_levels))
-        vrt_result = gdal.BuildVRT(self.vrt_file_location(discrete_id), discrete_layer["metadata"]["fileUris"], **vrt_config)
+        vrt_result = gdal.BuildVRT(self.vrt_file_location(discrete_id), job_data["parameters"]["fileUris"], **vrt_config)
 
         if vrt_result != None:
             vrt_result.FlushCache()
