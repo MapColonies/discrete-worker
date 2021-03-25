@@ -31,11 +31,7 @@ class Worker:
         self.log.info('Removing folder {0} on ID {1} with zoom-levels {2}'.format(tiles_location, discrete_id, zoom_levels))
         shutil.rmtree(tiles_location)
 
-    def buildvrt_utility(self, task_values):
-        zoom_levels = '{0}-{1}'.format(task_values["min_zoom_level"], task_values["max_zoom_level"])
-        discrete_id = task_values["discrete_id"]
-        task_id = task_values["task_id"]
-        version = task_values["version"]
+    def buildvrt_utility(self, job_id, task_id, discrete_id, version, zoom_levels):
         
         discrete_layer = request_connector.get_discrete_layer(discrete_id, version)
 
@@ -45,8 +41,8 @@ class Worker:
             'resampleAlg': self.__config["gdal"]["vrt"]["resample_algo"]
         }
 
-        self.log.info("Starting process GDAL-BUILD-VRT on taskID: {0} discreteID: {1}, version: {2} and zoom-levels: {3}"
-                        .format(task_id, discrete_id, version, zoom_levels))
+        self.log.info("Starting process GDAL-BUILD-VRT on jobID: {0} taskID: {1} discreteID: {2}, version: {3} and zoom-levels: {4}"
+                        .format(job_id, task_id, discrete_id, version, zoom_levels))
         vrt_result = gdal.BuildVRT(self.vrt_file_location(discrete_id), discrete_layer["metadata"]["fileUris"], **vrt_config)
 
         if vrt_result != None:
