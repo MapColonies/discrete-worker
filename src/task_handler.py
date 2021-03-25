@@ -95,7 +95,7 @@ class TaskHandler:
     def execute_task(self, job_id, task_id, discrete_id, zoom_levels):
 
         try:
-            self.__worker.buildvrt_utility(job_id, task_id, discrete_id, version, zoom_levels))
+            self.__worker.buildvrt_utility(job_id, task_id, discrete_id, version, zoom_levels)
             self.__worker.gdal2tiles_utility(job_id, task_id, discrete_id, version, zoom_levels)
 
             if (self.__config['storage_provider'].upper() == StorageProvider.S3):

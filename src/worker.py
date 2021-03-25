@@ -1,4 +1,4 @@
-from osgeo import gdal, ogr
+from osgeo import gdal
 from os import path, remove as remove_file
 from logger.jsonLogger import Logger
 from config import Config
@@ -7,7 +7,6 @@ from utilities import get_tiles_location
 from errors.vrt_errors import VRTError
 import src.request_connector as request_connector
 import constants
-import requests
 import shutil
 
 class Worker:
