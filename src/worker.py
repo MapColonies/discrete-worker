@@ -21,19 +21,25 @@ class Worker:
         output_path = path.join(constants.VRT_OUTPUT_FOLDER_NAME, output_file_name) 
         return output_path
 
-    def remove_vrt_file(self, discrete_id, zoom_levels):
+    def remove_vrt_file(self, discrete_id, job_id, task_id, zoom_levels):
         vrt_path = self.vrt_file_location(discrete_id)
-        self.log.info('Removing vrt file from path "{0}" on ID {1} with zoom-levels {2}'.format(vrt_path, discrete_id, zoom_levels))
+        self.log.info('Removing vrt file from path "{0}", jobID: {1}, taskID: {2}, discreteID {3}, with zoom-levels {4}'.format(vrt_path, job_id, task_id, discrete_id, zoom_levels))
         remove_file(vrt_path)
 
-    def remove_s3_temp_files(self, discrete_id, zoom_levels):
+    def remove_s3_temp_files(self, discrete_id, job_id, task_id, zoom_levels):
         tiles_location = '{0}/{1}'.format(self.tiles_folder_location, discrete_id)
-        self.log.info('Removing folder {0} on ID {1} with zoom-levels {2}'.format(tiles_location, discrete_id, zoom_levels))
+        self.log.info('Removing folder {0} on ID {1} with zoom-levels {2}'.format(tiles_location, job_id, task_id, discrete_id, zoom_levels))
         shutil.rmtree(tiles_location)
 
     def buildvrt_utility(self, job_id, task_id, discrete_id, version, zoom_levels):
         
-        discrete_layer = request_connector.get_discrete_layer(discrete_id, version)
+        job_data = request_connector.get_job_data(job_id)
+        if not (job_data["parameters"] and job_data["parameters"]["fileUris"]):
+            raise VRTError("jobData didn't have fileUris field, for jobID: {0} taskID: {1} discreteID: {2}, version: {3} jobData: {4}"
+            .format(job_id, task_id, discrete_id, version, job_data))
+
+        job_parameters = job_data["parameters"] && 
+        job_file_uri = job_data["parameters"]["fileUris"]
 
         vrt_config = {
             'VRTNodata': self.__config["gdal"]["vrt"]["no_data"],
@@ -52,11 +58,7 @@ class Worker:
             raise VRTError("Could not create VRT File")
 
 
-    def gdal2tiles_utility(self, task_values):
-        zoom_levels = '{0}-{1}'.format(task_values["min_zoom_level"], task_values["max_zoom_level"])
-        discrete_id = task_values["discrete_id"]
-        task_id = task_values["task_id"]
-        version = task_values["version"]
+    def gdal2tiles_utility(self, job_id, task_id, discrete_id, version, zoom_levels):
 
         options = {
             'resampling': self.__config['gdal']['resampling'],
@@ -68,6 +70,6 @@ class Worker:
 
         tiles_path = '{0}/{1}/{2}'.format(self.tiles_folder_location, discrete_id, version)
 
-        self.log.info("Starting process GDAL2TILES on taskID: {0} discreteID: {1}, version: {2} and zoom-levels: {3}"
-                            .format(task_id, discrete_id, version, zoom_levels))
+        self.log.info("Starting process GDAL2TILES on jobID: {0}, taskID: {1} discreteID: {2}, version: {3} and zoom-levels: {4}"
+                            .format(job_id, task_id, discrete_id, version, zoom_levels))
         generate_tiles(self.vrt_file_location(discrete_id), tiles_path, **options)
