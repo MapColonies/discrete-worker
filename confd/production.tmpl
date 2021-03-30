@@ -49,5 +49,5 @@
     },
     "storage_provider": "{{ getv "/configuration/discrete/worker/storage/provider" "fs" }}",
     "max_attempts": {{ getv "/configuration/discrete/worker/max/attempts" "3" }},
-    "mandatory_task_fields": ["discrete_id", "version", "task_id", "min_zoom_level", "max_zoom_level"]
+    "mandatory_task_fields": ["discrete_id", "version", "job_id", "task_id", "min_zoom_level", "max_zoom_level"]
 }
