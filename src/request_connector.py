@@ -28,8 +28,8 @@ def get_job_data(job_id):
     log.info('Retrieving Job Data For job id {0}'.format(job_id))
     return request_session.get(get_job_by_id_url).json()
 
-def post_end_process(discrete_id, version):
+def post_end_process(job_id, task_id):
     # todo: integrate with new overseer API - pass jobID and taskID
-    post_to_overseer_url = '{0}/tasks/{1}/{2}/completed'.format(overseer_url, discrete_id, version)
+    post_to_overseer_url = '{0}/tasks/{1}/{2}/completed'.format(overseer_url, job_id, task_id)
     log.info('Notifying to overseer that task\'s completed in path {0}'.format(post_to_overseer_url))
     request_session.post(url=post_to_overseer_url)
