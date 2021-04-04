@@ -53,8 +53,7 @@ class TaskHandler:
                 version = task_values["version"]
                 min_zoom_level = task_values["min_zoom_level"]
                 max_zoom_level = task_values["max_zoom_level"]
-                # todo: integrate with new overseer API - pass jobID and taskID
-                request_connector.post_end_process(discrete_id, version)
+                request_connector.post_end_process(job_id, task_id)
                 self.log.info('Comitting task from kafka with jobId: {0}, taskId: {1}, discreteID: {2}, version: {3}, zoom-levels: {4}-{5}'
                               .format(job_id, task_id, discrete_id, version, min_zoom_level, max_zoom_level))
                 consumer.commit()
