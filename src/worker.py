@@ -33,8 +33,8 @@ class Worker:
     def buildvrt_utility(self, job_id, task_id, discrete_id, version, zoom_levels):
         
         job_data = request_connector.get_job_data(job_id)
-        if not (job_data["parameters"] and job_data["parameters"]["fileUris"]):
-            raise VRTError("jobData didn't have fileUris field, for jobID: {0} taskID: {1} discreteID: {2}, version: {3} jobData: {4}"
+        if not (job_data["parameters"]["fileNames"] and job_data["parameters"]["originDirectory"]):
+            raise VRTError("jobData didn't have source files data, for jobID: {0} taskID: {1} discreteID: {2}, version: {3} jobData: {4}"
             .format(job_id, task_id, discrete_id, version, job_data))
 
         vrt_config = {
@@ -45,7 +45,9 @@ class Worker:
 
         self.log.info("Starting process GDAL-BUILD-VRT on jobID: {0} taskID: {1} discreteID: {2}, version: {3} and zoom-levels: {4}"
                         .format(job_id, task_id, discrete_id, version, zoom_levels))
-        vrt_result = gdal.BuildVRT(self.vrt_file_location(discrete_id), job_data["parameters"]["fileUris"], **vrt_config)
+        mount_path = self.__config['source_mount']
+        files = [path.join(mount_path, job_data["parameters"]['originDirectory'], file) for file in job_data["parameters"]['fileNames']]
+        vrt_result = gdal.BuildVRT(self.vrt_file_location(discrete_id), files, **vrt_config)
 
         if vrt_result != None:
             vrt_result.FlushCache()

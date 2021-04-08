@@ -71,7 +71,10 @@ def createDevConfdConfigFile (env):
 def runConfd():
   print('Running confd')
   try:
-    subprocess.run([f'{confdPath} -onetime -backend env -confdir {confdDevBasePath}'],shell=True,check=True)
+    if (os == 'Linux'):
+      subprocess.run([f'{confdPath} -onetime -backend env -confdir {confdDevBasePath}'],shell=True,check=True)
+    else:
+      subprocess.run([confdPath, '-onetime', '-backend', 'env', '-confdir', confdDevBasePath], shell=True, check=True)
   except:
     print('confd failed to run');
 

@@ -26,6 +26,7 @@ keys = [
     "/configuration/discrete/worker/gdal/vrt/no/data",
     "/configuration/discrete/worker/gdal/vrt/output/srs",
     "/configuration/discrete/worker/gdal/vrt/resample/algo",
+    "/configuration/discrete/worker/source/mount",
     "/configuration/discrete/worker/fs/external/physical/path",
     "/configuration/discrete/worker/fs/internal/outputs/path",
     "/configuration/discrete/worker/s3/endpoint/url",

@@ -79,7 +79,7 @@ class TaskHandler:
             current_retry = current_retry + 1
             update_body = { "status": StatusEnum.in_progress, "attempts": current_retry }
             request_connector.update_task(job_id, task_id, update_body)
-            success, reason = self.execute_task(job_id, task_id, discrete_id, zoom_levels)
+            success, reason = self.execute_task(job_id, task_id, discrete_id, version, zoom_levels)
 
             if success:
                 self.log.info('Successfully finished jobID: {0}, taskID: {1}, discreteID: {2}, version: {3} with zoom-levels: {4}.'
@@ -91,7 +91,7 @@ class TaskHandler:
             update_body = { "status": StatusEnum.completed if success else StatusEnum.failed, "reason": reason }
             request_connector.update_task(job_id, task_id, update_body)
 
-    def execute_task(self, job_id, task_id, discrete_id, zoom_levels):
+    def execute_task(self, job_id, task_id, discrete_id, version, zoom_levels):
 
         try:
             self.__worker.buildvrt_utility(job_id, task_id, discrete_id, version, zoom_levels)
