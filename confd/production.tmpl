@@ -35,6 +35,7 @@
             "resample_algo": "{{ getv "/configuration/discrete/worker/gdal/vrt/resample/algo" "bilinear" }}"
         }
     },
+    "source_mount": "{{ getv "/configuration/discrete/worker/source/mount" "/sourceMount" }}",
     "fs": {
         "external_physical_path": "{{ getv "/configuration/discrete/worker/fs/external/physical/path" "/ubuntu/outputs"}}",
         "internal_outputs_path": "{{ getv "/configuration/discrete/worker/fs/internal/outputs/path" "./tiles_outputs"}}"

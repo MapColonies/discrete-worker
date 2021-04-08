@@ -1,5 +1,5 @@
 FROM osgeo/gdal:alpine-normal-3.2.0
-RUN mkdir /vsis3 && chmod 777 /vsis3
+RUN mkdir /vsis3 && chmod -R 777 /vsis3
 RUN mkdir /app
 WORKDIR /app
 ENV PYTHONPATH=${PYTHONPATH}:'/app'
