@@ -7,10 +7,10 @@
         "poll_timeout_milliseconds": {{ getv "/configuration/discrete/worker/kafka/poll/timeout/milliseconds" "270000000" }},
         "poll_records": {{ getv "/configuration/discrete/worker/kafka/poll/records" "1" }},
         "ssl_context": "{{ getv "/configuration/discrete/worker/kafka/ssl/context" "PLAINTEXT" }}",
-        "ssl_cafile": {{ getv "/configuration/discrete/worker/kafka/ssl/cafile" "null" }},
-        "ssl_certfile": {{ getv "/configuration/discrete/worker/kafka/ssl/certfile" "null" }},
-        "ssl_keyfile": {{ getv "/configuration/discrete/worker/kafka/ssl/keyfile" "null" }},
-        "ssl_password": {{ getv "/configuration/discrete/worker/kafka/ssl/password" "null" }}
+        "ssl_cafile": "{{ getv "/configuration/discrete/worker/kafka/ssl/cafile" "null" }}",
+        "ssl_certfile": "{{ getv "/configuration/discrete/worker/kafka/ssl/certfile" "null" }}",
+        "ssl_keyfile": "{{ getv "/configuration/discrete/worker/kafka/ssl/keyfile" "null" }}",
+        "ssl_password": "{{ getv "/configuration/discrete/worker/kafka/ssl/password" "null" }}"
     },
     "logger": {
         "type": "{{ getv "/configuration/discrete/worker/logger/type" "stream" }}",
