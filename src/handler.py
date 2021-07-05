@@ -9,28 +9,17 @@ import src.request_connector as request_connector
 import src.utilities as utilities
 import json
 
-class TaskHandler:
+class Handler:
     def __init__(self):
         self.log = Logger.get_logger_instance()
         self.__config = Config.get_config_instance()
         self.__worker = Worker()
 
     def handle_tasks(self):
-        consumer = KafkaConsumer(bootstrap_servers=self.__config['kafka']['host_ip'],
-                                 enable_auto_commit=False,
-                                 max_poll_interval_ms=self.__config['kafka']['poll_timeout_milliseconds'],
-                                 max_poll_records=self.__config['kafka']['poll_records'],
-                                 auto_offset_reset=self.__config['kafka']['offset_reset'],
-                                 group_id=self.__config['kafka']['group_id'],
-                                 ssl_context=self.__config['kafka']['ssl_context'],
-                                 ssl_cafile=self.__config['kafka']['ssl_cafile'],
-                                 ssl_certfile=self.__config['kafka']['ssl_certfile'],
-                                 ssl_keyfile=self.__config['kafka']['ssl_keyfile'],
-                                 ssl_password=self.__config['kafka']['ssl_password'],
-                                 partition_assignment_strategy=[RoundRobinPartitionAssignor])
+
         try:
             consumer.subscribe([self.__config['kafka']['topic']])
-
+            
             for task in consumer:
                 task_values = json.loads(task.value)
                 is_valid, reason = utilities.validate_data(task_values)
@@ -39,7 +28,7 @@ class TaskHandler:
                 job_id = task_values["job_id"]
                 if not is_valid:
                     if task_id and job_id:
-                        update_body = { "status": StatusEnum.failed, "reason": reason }
+                        update_body = {"status": StatusEnum.failed, "reason": reason}
                         request_connector.update_task(job_id, task_id, update_body)
                         self.log.error("Validation error - could not process request. Comitting from queue")
                     else:
