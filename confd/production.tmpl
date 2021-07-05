@@ -4,8 +4,8 @@
         "task_type": "{{ getv "/configuration/discrete/worker/queue/task/type" "Discrete-Tiling" }}",
         "job_manager_url": "{{ getv "/configuration/discrete/worker/queue/job/manager/url" "http://127.0.0.1:8082" }}",
         "heartbeat_manager_url": "{{ getv "/configuration/discrete/worker/queue/heartbeat/manager/url" "http://127.0.0.1:8081" }}",
-        "heartbeat_interval_ms": {{ getv "/configuration/discrete/worker/queue/heartbeat/interval/ms" "0.2" }},
-        "dequeue_interval_ms": {{ getv "/configuration/discrete/worker/queue/dequeue/interval/ms" "3" }}
+        "heartbeat_interval_seconds": {{ getv "/configuration/discrete/worker/queue/heartbeat/interval/seconds" "0.2" }},
+        "dequeue_interval_seconds": {{ getv "/configuration/discrete/worker/queue/dequeue/interval/seconds" "3" }}
     },
     "logger": {
         "type": "{{ getv "/configuration/discrete/worker/logger/type" "stream" }}",

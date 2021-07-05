@@ -13,12 +13,12 @@ class Handler:
         self.__worker = Worker()
         self.queue_handler = TaskHandler(self.__config["queue"]["job_type"], self.__config["queue"]["task_type"],
                                          self.__config["queue"]["job_manager_url"], self.__config["queue"]["heartbeat_manager_url"],
-                                         self.__config["queue"]["heartbeat_interval_ms"], self.log)
+                                         self.__config["queue"]["heartbeat_interval_seconds"], self.log)
 
     async def handle_tasks(self):
         try:
             while True:
-                task = await self.queue_handler.dequeue(self.__config["queue"]["dequeue_interval_ms"])
+                task = await self.queue_handler.dequeue(self.__config["queue"]["dequeue_interval_seconds"])
                 task_id = task["id"]
                 job_id = task["jobId"]
                 parameters = task["parameters"]
