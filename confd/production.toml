@@ -2,7 +2,6 @@
 src = "production.tmpl"
 dest = "./config/default.json"
 keys = [
-    "/configuration/discrete/worker/update/delay/seconds",
     "/configuration/discrete/worker/queue/task/type",
     "/configuration/discrete/worker/queue/job/type",
     "/configuration/discrete/worker/queue/job/manager/url",
