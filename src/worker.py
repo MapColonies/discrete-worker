@@ -67,5 +67,5 @@ class Worker:
         tiles_path = '{0}/{1}/{2}'.format(self.tiles_folder_location, job_data['parameters']['discreteId'], job_data['parameters']['version'])
 
         self.log.info("Starting process GDAL2TILES on {0} and zoom-levels: {1}"
-                            .format(utilities.task_format_log(job_data), zoom_levels))
+                      .format(utilities.task_format_log(job_data), zoom_levels))
         generate_tiles(self.vrt_file_location(job_data['parameters']['discreteId']), tiles_path, **options)
