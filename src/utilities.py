@@ -38,10 +38,10 @@ def get_tiles_location():
     if tiles_location_instance is None:
         storage_provider = config['storage_provider'].upper()
 
-        if (storage_provider == StorageProvider.FS):
+        if storage_provider == StorageProvider.FS:
            tiles_location_instance = config["fs"]["internal_outputs_path"]
 
-        elif (storage_provider == StorageProvider.S3):
+        elif storage_provider == StorageProvider.S3:
             bucket = config["s3"]["bucket"]
             s3_path = '/vsis3/{0}'.format(bucket)
             tiles_location_instance = s3_path
@@ -55,8 +55,12 @@ def validate_data(task_values):
             reason = 'Missing field "{0}"'.format(field)
             return False, reason
 
-    if (task_values['minZoomLevel'] > task_values['maxZoomLevel']):
+    if task_values['minZoomLevel'] > task_values['maxZoomLevel']:
         reason = 'Minimum zoom level cannot be greater than maximum zoom level'
         return False, reason
     
     return True, ""
+
+def task_format_log(task_values):
+    return "jobId: {0}, taskId: {1}, discreteID: {2}, version: {3}"\
+        .format(task_values['jobId'], task_values['id'], task_values['parameters']['discreteId'], task_values['parameters']['version'])
