@@ -55,7 +55,7 @@ def validate_data(task_values):
             reason = 'Missing field "{0}"'.format(field)
             return False, reason
 
-    if (task_values['min_zoom_level'] > task_values['max_zoom_level']):
+    if (task_values['minZoomLevel'] > task_values['maxZoomLevel']):
         reason = 'Minimum zoom level cannot be greater than maximum zoom level'
         return False, reason
     
