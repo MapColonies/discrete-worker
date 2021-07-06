@@ -70,5 +70,5 @@ def task_format_log(task):
     parameters = task['parameters']
     if task and parameters:
         log_format = "jobId: {0}, taskId: {1}, discreteID: {2}, version: {3}"\
-            .format(task['jobId'], task['id'], task['parameters']['discreteId'], task['parameters']['version'])
+            .format(task['jobId'], task['id'], parameters['discreteId'], parameters['version'])
         return log_format

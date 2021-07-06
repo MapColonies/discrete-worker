@@ -55,7 +55,7 @@ class Handler:
 
             if success:
                 self.log.info('Successfully finished {0}'
-                              .format(task))
+                              .format(utilities.task_format_log(task)))
                 await self.queue_handler.ack(job_id, task_id)
             else:
                 self.log.error('Failed executing task with {0}, current attempt is: {1}'
