@@ -25,11 +25,8 @@ class Handler:
                 is_valid, reason = utilities.validate_data(parameters)
 
                 if not is_valid:
-                    if task_id and job_id:
-                        self.log.error("Validation error - could not process request. Committing task with: {0}"
-                                       .format(utilities.task_format_log(task)))
-                    else:
-                        self.log.error("Validation error - could not process request and could not save status to DB, Committing from queue")
+                    self.log.error("Validation error - could not process request and could not save status to DB, Committing task with: {0}"
+                                   .format(utilities.task_format_log(task)))
                     await self.queue_handler.reject(job_id, task_id, False, reason)
                     continue
 
