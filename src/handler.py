@@ -41,45 +41,45 @@ class Handler:
         except Exception as e:
             raise e
 
-    async def do_task_loop(self, task_values):
-        parameters = task_values["parameters"]
-        job_id = task_values["jobId"]
-        task_id = task_values["id"]
+    async def do_task_loop(self, task):
+        parameters = task["parameters"]
+        job_id = task["jobId"]
+        task_id = task["id"]
         max_retries = self.__config['max_attempts']
         min_zoom_level = parameters["minZoomLevel"]
         max_zoom_level = parameters["maxZoomLevel"]
         zoom_levels = '{0}-{1}'.format(min_zoom_level, max_zoom_level)
-        current_retry = task_values['attempts']
+        current_retry = task['attempts']
         success = False
 
         while (current_retry < max_retries and not success):
             current_retry = current_retry + 1
-            success, reason = self.execute_task(task_values, zoom_levels)
+            success, reason = self.execute_task(task, zoom_levels)
 
             if success:
                 self.log.info('Successfully finished {0}'
-                              .format(task_values))
+                              .format(task))
                 await self.queue_handler.ack(job_id, task_id)
             else:
                 self.log.error('Failed executing task with {0}, current attempt is: {1}'
-                               .format(utilities.task_format_log(task_values), current_retry))
+                               .format(utilities.task_format_log(task), current_retry))
                 await self.queue_handler.reject(job_id, task_id, True, reason)
         if current_retry > max_retries and not success:
             await self.queue_handler.reject(job_id, task_id, False)
         return success
 
-    def execute_task(self, job_data, zoom_levels):
+    def execute_task(self, task, zoom_levels):
         try:
-            self.__worker.buildvrt_utility(job_data, zoom_levels)
-            self.__worker.gdal2tiles_utility(job_data, zoom_levels)
+            self.__worker.buildvrt_utility(task, zoom_levels)
+            self.__worker.gdal2tiles_utility(task, zoom_levels)
 
             if (self.__config['storage_provider'].upper() == StorageProvider.S3):
-                self.__worker.remove_s3_temp_files(job_data, zoom_levels)
-            self.__worker.remove_vrt_file(job_data, zoom_levels)
+                self.__worker.remove_s3_temp_files(task, zoom_levels)
+            self.__worker.remove_vrt_file(task, zoom_levels)
 
             success_reason = "Task Completed"
             return True, success_reason
         except Exception as error:
             self.log.error('An error occured while processing {0} with error: {1}'
-                           .format(utilities.task_format_log(job_data), error))
+                           .format(utilities.task_format_log(task), error))
             return False, str(error)

@@ -21,20 +21,20 @@ class Worker:
         output_path = path.join(constants.VRT_OUTPUT_FOLDER_NAME, output_file_name) 
         return output_path
 
-    def remove_vrt_file(self, job_data):
-        vrt_path = self.vrt_file_location(job_data['parameters']['discreteId'])
-        self.log.info('Removing vrt file from path "{0}", {1}'.format(vrt_path, utilities.task_format_log(job_data)))
+    def remove_vrt_file(self, task):
+        vrt_path = self.vrt_file_location(task['parameters']['discreteId'])
+        self.log.info('Removing vrt file from path "{0}", {1}'.format(vrt_path, utilities.task_format_log(task)))
         remove_file(vrt_path)
 
-    def remove_s3_temp_files(self, job_data, zoom_levels):
-        tiles_location = '{0}/{1}'.format(self.tiles_folder_location, job_data['parameters']['discreteId'])
-        self.log.info('Removing folder {0} on {1}'.format(tiles_location, utilities.task_format_log(job_data)))
+    def remove_s3_temp_files(self, task):
+        tiles_location = '{0}/{1}'.format(self.tiles_folder_location, task['parameters']['discreteId'])
+        self.log.info('Removing folder {0} on {1}'.format(tiles_location, utilities.task_format_log(task)))
         shutil.rmtree(tiles_location)
 
-    def buildvrt_utility(self, job_data, zoom_levels):
-        if not (job_data["parameters"]["fileNames"] and job_data["parameters"]["originDirectory"]):
+    def buildvrt_utility(self, task, zoom_levels):
+        if not (task["parameters"]["fileNames"] and task["parameters"]["originDirectory"]):
             raise VRTError("jobData didn't have source files data, for {0}"
-            .format(utilities.task_format_log(job_data)))
+                           .format(utilities.task_format_log(task)))
 
         vrt_config = {
             'VRTNodata': self.__config["gdal"]["vrt"]["no_data"],
@@ -43,10 +43,10 @@ class Worker:
         }
 
         self.log.info("Starting process GDAL-BUILD-VRT on {0} and zoom-levels: {1}"
-                        .format(utilities.task_format_log(job_data), zoom_levels))
+                      .format(utilities.task_format_log(task), zoom_levels))
         mount_path = self.__config['source_mount']
-        files = [path.join(mount_path, job_data["parameters"]['originDirectory'], file) for file in job_data["parameters"]['fileNames']]
-        vrt_result = gdal.BuildVRT(self.vrt_file_location(job_data["parameters"]['discreteId']), files, **vrt_config)
+        files = [path.join(mount_path, task["parameters"]['originDirectory'], file) for file in task["parameters"]['fileNames']]
+        vrt_result = gdal.BuildVRT(self.vrt_file_location(task["parameters"]['discreteId']), files, **vrt_config)
 
         if vrt_result != None:
             vrt_result.FlushCache()
@@ -55,7 +55,7 @@ class Worker:
             raise VRTError("Could not create VRT File")
 
 
-    def gdal2tiles_utility(self, job_data, zoom_levels):
+    def gdal2tiles_utility(self, task, zoom_levels):
         options = {
             'resampling': self.__config['gdal']['resampling'],
             'tmscompatible': self.__config['gdal']['tms_compatible'],
@@ -64,8 +64,8 @@ class Worker:
             'zoom': zoom_levels
         }
 
-        tiles_path = '{0}/{1}/{2}'.format(self.tiles_folder_location, job_data['parameters']['discreteId'], job_data['parameters']['version'])
+        tiles_path = '{0}/{1}/{2}'.format(self.tiles_folder_location, task['parameters']['discreteId'], task['parameters']['version'])
 
         self.log.info("Starting process GDAL2TILES on {0} and zoom-levels: {1}"
-                      .format(utilities.task_format_log(job_data), zoom_levels))
-        generate_tiles(self.vrt_file_location(job_data['parameters']['discreteId']), tiles_path, **options)
+                      .format(utilities.task_format_log(task), zoom_levels))
+        generate_tiles(self.vrt_file_location(task['parameters']['discreteId']), tiles_path, **options)
