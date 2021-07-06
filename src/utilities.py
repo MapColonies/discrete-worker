@@ -62,7 +62,6 @@ def validate_data(task_parameters):
     if task_parameters['minZoomLevel'] > task_parameters['maxZoomLevel']:
         reason = 'Minimum zoom level cannot be greater than maximum zoom level'
         return False, reason
-
     return True, ""
 
 
