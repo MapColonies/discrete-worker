@@ -4,6 +4,8 @@ from src.worker import Worker
 from model.enums.storage_provider import StorageProvider
 import src.utilities as utilities
 from pyority_queue.task_handler import *
+import src.request_connector as request_connector
+
 
 class Handler:
     def __init__(self):
@@ -30,11 +32,8 @@ class Handler:
                     await self.queue_handler.reject(job_id, task_id, False, reason)
                     continue
 
-                success = await self.do_task_loop(task)
-
-                if success:
-                    self.log.info('Committing task with {0}'.format(utilities.task_format_log(task)))
-                    await self.queue_handler.ack(job_id, task_id)
+                await self.do_task_loop(task)
+                request_connector.post_end_process(job_id, task_id)
         except Exception as e:
             raise e
 
@@ -54,7 +53,7 @@ class Handler:
             success, reason = self.execute_task(task, zoom_levels)
 
             if success:
-                self.log.info('Successfully finished {0}'
+                self.log.info('Successfully finished {0}, Committing from queue'
                               .format(utilities.task_format_log(task)))
                 await self.queue_handler.ack(job_id, task_id)
             else:
