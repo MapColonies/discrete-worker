@@ -1,4 +1,6 @@
-kafka-python
+yarl
+multidict
+mc-pyority-queue
 flask
 requests
 mapcoloniesjsonlogger==1.0.0

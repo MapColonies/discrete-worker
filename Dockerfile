@@ -4,10 +4,15 @@ RUN mkdir /app
 WORKDIR /app
 ENV PYTHONPATH=${PYTHONPATH}:'/app'
 RUN apk update -q --no-cache \
-    && apk add -q --no-cache python3 py3-pip
+    && apk add -q --no-cache python3 py3-pip \
+    gcc git python3-dev musl-dev linux-headers \
+    libc-dev  rsync \
+    findutils wget util-linux grep libxml2-dev libxslt-dev
+RUN apk update \
+    &&  pip3 install --upgrade pip
 COPY requirements.txt ./
 RUN pip3 install -r ./requirements.txt -t /app
-RUN apk del py3-pip
+RUN apk del py3-pip gcc git
 COPY . .
 RUN chmod +x start.sh
 RUN python3 /app/confd/generate-config.py --environment production

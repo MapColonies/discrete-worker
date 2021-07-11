@@ -1,25 +1,17 @@
 {
-    "kafka" : {
-        "host_ip": {{ getv "/configuration/discrete/worker/kafka/host/ip" "[\"10.28.11.49:9092\"]" }},
-        "topic": "{{ getv "/configuration/discrete/worker/kafka/topic" "topic-test-101" }}",
-        "group_id": "{{ getv "/configuration/discrete/worker/kafka/group/id" "task_group_1" }}",
-        "offset_reset": "{{ getv "/configuration/discrete/worker/kafka/offest/reset" "earliest" }}",
-        "poll_timeout_milliseconds": {{ getv "/configuration/discrete/worker/kafka/poll/timeout/milliseconds" "270000000" }},
-        "poll_records": {{ getv "/configuration/discrete/worker/kafka/poll/records" "1" }},
-        "ssl_context": "{{ getv "/configuration/discrete/worker/kafka/ssl/context" "PLAINTEXT" }}",
-        "ssl_cafile": "{{ getv "/configuration/discrete/worker/kafka/ssl/cafile" "null" }}",
-        "ssl_certfile": "{{ getv "/configuration/discrete/worker/kafka/ssl/certfile" "null" }}",
-        "ssl_keyfile": "{{ getv "/configuration/discrete/worker/kafka/ssl/keyfile" "null" }}",
-        "ssl_password": "{{ getv "/configuration/discrete/worker/kafka/ssl/password" "null" }}"
+    "queue": {
+        "job_type": "{{ getv "/configuration/discrete/worker/queue/job/type" "Discrete-Tiling" }}",
+        "task_type": "{{ getv "/configuration/discrete/worker/queue/task/type" "Discrete-Tiling" }}",
+        "job_manager_url": "{{ getv "/configuration/discrete/worker/queue/job/manager/url" "http://127.0.0.1:8082" }}",
+        "heartbeat_manager_url": "{{ getv "/configuration/discrete/worker/queue/heartbeat/manager/url" "http://127.0.0.1:8081" }}",
+        "heartbeat_interval_seconds": {{ getv "/configuration/discrete/worker/queue/heartbeat/interval/seconds" "0.2" }},
+        "dequeue_interval_seconds": {{ getv "/configuration/discrete/worker/queue/dequeue/interval/seconds" "3" }}
     },
     "logger": {
         "type": "{{ getv "/configuration/discrete/worker/logger/type" "stream" }}",
         "level": "{{ getv "/configuration/discrete/worker/logger/level" "INFO" }}",
         "path": "{{ getv "/configuration/discrete/worker/logger/path" "./dw_logs.log" }}",
         "output": "{{ getv "/configuration/discrete/worker/logger/output" "stdout" }}"
-    },
-    "discrete_storage": {
-        "url": "{{ getv "/configuration/discrete/worker/discrete/storage/url" "http://127.0.0.1:8080" }}"
     },
     "overseer": {
         "url": "{{ getv "/configuration/discrete/worker/overseer/url" "http://127.0.0.1:8081" }}"
@@ -50,5 +42,5 @@
     },
     "storage_provider": "{{ getv "/configuration/discrete/worker/storage/provider" "fs" }}",
     "max_attempts": {{ getv "/configuration/discrete/worker/max/attempts" "3" }},
-    "mandatory_task_fields": ["discrete_id", "version", "job_id", "task_id", "min_zoom_level", "max_zoom_level"]
+    "mandatory_task_fields": ["discreteId", "version", "minZoomLevel", "maxZoomLevel", "fileNames", "originDirectory"]
 }
