@@ -19,7 +19,7 @@ class Handler:
     async def handle_tasks(self):
         try:
             while True:
-                task = await self.queue_handler.dequeue(self.__config["queue"]["dequeue_interval_seconds"])
+                task = await self.queue_handler.dequeue(self.__config["queue"]["dequeue_interval_seconds"]) # dequeue task 
 
                 self.log.info("Task received - {0}".format(task))
                 task_id = task["id"]
