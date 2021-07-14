@@ -20,6 +20,7 @@ class Handler:
         try:
             while True:
                 task = await self.queue_handler.dequeue(self.__config["queue"]["dequeue_interval_seconds"])
+
                 self.log.info("Task received - {0}".format(task))
                 task_id = task["id"]
                 job_id = task["jobId"]
@@ -60,17 +61,16 @@ class Handler:
                 self.log.error('Failed executing task with {0}, current attempt is: {1}'
                                .format(utilities.task_format_log(task), current_retry))
                 await self.queue_handler.reject(job_id, task_id, True, reason)
-        if current_retry > max_retries and not success:
+        if current_retry >= max_retries and not success:
             await self.queue_handler.reject(job_id, task_id, False)
-        return success
 
     def execute_task(self, task, zoom_levels):
         try:
             self.__worker.buildvrt_utility(task, zoom_levels)
             self.__worker.gdal2tiles_utility(task, zoom_levels)
 
-            if (self.__config['storage_provider'].upper() == StorageProvider.S3):
-                self.__worker.remove_s3_temp_files(task, zoom_levels)
+            if self.__config['storage_provider'].upper() == StorageProvider.S3:
+                self.__worker.remove_s3_temp_files(task)
             self.__worker.remove_vrt_file(task)
 
             success_reason = "Task Completed"
