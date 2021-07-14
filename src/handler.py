@@ -33,7 +33,7 @@ class Handler:
                     continue
 
                 await self.do_task_loop(task)
-                request_connector.post_end_process(job_id, task_id)
+                #request_connector.post_end_process(job_id, task_id)
         except Exception as e:
             raise e
 
@@ -42,8 +42,8 @@ class Handler:
         job_id = task["jobId"]
         task_id = task["id"]
         max_retries = self.__config['max_attempts']
-        min_zoom_level = parameters["minZoomLevel"]
-        max_zoom_level = parameters["maxZoomLevel"]
+        min_zoom_level = parameters["minZoom"]
+        max_zoom_level = parameters["maxZoom"]
         zoom_levels = '{0}-{1}'.format(min_zoom_level, max_zoom_level)
         current_retry = task['attempts']
         success = False
@@ -71,7 +71,7 @@ class Handler:
 
             if (self.__config['storage_provider'].upper() == StorageProvider.S3):
                 self.__worker.remove_s3_temp_files(task, zoom_levels)
-            self.__worker.remove_vrt_file(task, zoom_levels)
+            self.__worker.remove_vrt_file(task)
 
             success_reason = "Task Completed"
             return True, success_reason
