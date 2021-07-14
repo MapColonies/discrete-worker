@@ -33,7 +33,7 @@ class Handler:
                     continue
 
                 await self.do_task_loop(task)
-                #request_connector.post_end_process(job_id, task_id)
+                request_connector.post_end_process(job_id, task_id)
         except Exception as e:
             raise e
 
