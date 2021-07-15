@@ -1,6 +1,6 @@
 yarl
 multidict
-mc-pyority-queue
+mc-pyority-queue=1.0.0
 flask
 requests
 mapcoloniesjsonlogger==1.0.0
