@@ -21,7 +21,7 @@
         "resampling": "{{ getv "/configuration/discrete/worker/gdal/resampling" "bilinear" }}",
         "tms_compatible": {{ getv "/configuration/discrete/worker/gdal/tms/compatible" "true" }},
         "profile": "{{ getv "/configuration/discrete/worker/gdal/profile" "geodetic"}}",
-        "src_nodata": "{{ getv "/configuration/discrete/worker/gdal/profile" "0,0,0"}}",
+        "src_nodata": "{{ getv "/configuration/discrete/worker/gdal/src/nodata" "0,0,0"}}",
         "vrt": {
             "no_data": "{{ getv "/configuration/discrete/worker/gdal/vrt/no/data" "0" }}",
             "output_srs": "{{ getv "/configuration/discrete/worker/gdal/vrt/output/srs" "EPSG:4326" }}",
