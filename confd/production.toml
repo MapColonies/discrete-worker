@@ -17,6 +17,7 @@ keys = [
     "/configuration/discrete/worker/gdal/resampling",
     "/configuration/discrete/worker/gdal/tms/compatible",
     "/configuration/discrete/worker/gdal/profile",
+    "/configuration/discrete/worker/gdal/src_nodata",
     "/configuration/discrete/worker/gdal/vrt/no/data",
     "/configuration/discrete/worker/gdal/vrt/output/srs",
     "/configuration/discrete/worker/gdal/vrt/resample/algo",

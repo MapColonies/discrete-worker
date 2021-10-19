@@ -61,6 +61,7 @@ class Worker:
             'tmscompatible': self.__config['gdal']['tms_compatible'],
             'profile': self.__config['gdal']['profile'],
             'nb_processes': self.__config['gdal']['process_count'],
+            'srcnodata': self.__config['gdal']['src_nodata'],
             'zoom': zoom_levels
         }
 
