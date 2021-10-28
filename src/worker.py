@@ -65,10 +65,9 @@ class Worker:
             'zoom': zoom_levels
         }
         discreteId = task['parameters']['discreteId']
-        version = task['parameters']['version']
-        productType = task['parameters']['productType']
-        tiles_path = '{0}/{1}/{2}/{3}'.format(self.tiles_folder_location, discreteId, version, productType)
+        layerRelativePath = task['parameters']['layerRelativePath']
+        tiles_path = '{0}/{1}'.format(self.tiles_folder_location, layerRelativePath)
 
         self.log.info("Starting process GDAL2TILES on {0} and zoom-levels: {1}"
                       .format(utilities.task_format_log(task), zoom_levels))
-        generate_tiles(self.vrt_file_location(task['parameters']['discreteId']), tiles_path, **options)
+        generate_tiles(self.vrt_file_location(discreteId), tiles_path, **options)
