@@ -64,8 +64,10 @@ class Worker:
             'srcnodata': self.__config['gdal']['src_nodata'],
             'zoom': zoom_levels
         }
-
-        tiles_path = '{0}/{1}/{2}'.format(self.tiles_folder_location, task['parameters']['discreteId'], task['parameters']['version'])
+        discreteId = task['parameters']['discreteId']
+        version = task['parameters']['version']
+        productType = task['parameters']['productType']
+        tiles_path = '{0}/{1}/{2}/{3}'.format(self.tiles_folder_location, discreteId, version, productType)
 
         self.log.info("Starting process GDAL2TILES on {0} and zoom-levels: {1}"
                       .format(utilities.task_format_log(task), zoom_levels))
