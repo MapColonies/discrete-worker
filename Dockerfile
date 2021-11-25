@@ -1,18 +1,15 @@
-FROM osgeo/gdal:alpine-normal-3.2.0
+FROM gdal:ubuntu-small-3.4.0-ecw-5.5.0
 RUN mkdir /vsis3 && chmod -R 777 /vsis3
 RUN mkdir /app
 WORKDIR /app
 ENV PYTHONPATH=${PYTHONPATH}:'/app'
-RUN apk update -q --no-cache \
-    && apk add -q --no-cache python3 py3-pip \
-    gcc git python3-dev musl-dev linux-headers \
-    libc-dev  rsync \
-    findutils wget util-linux grep libxml2-dev libxslt-dev
-RUN apk update \
+RUN apt-get update -y \
+    && apt-get install -y python3-pip
+RUN apt-get update \
     &&  pip3 install --upgrade pip
 COPY requirements.txt ./
 RUN pip3 install -r ./requirements.txt -t /app
-RUN apk del py3-pip gcc git
+RUN apt-get remove -y python3-pip
 COPY . .
 RUN chmod +x start.sh
 RUN python3 /app/confd/generate-config.py --environment production
