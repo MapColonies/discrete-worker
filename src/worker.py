@@ -38,7 +38,6 @@ class Worker:
 
         vrt_config = {
             'VRTNodata': self.__config["gdal"]["vrt"]["no_data"],
-            'outputSRS': self.__config["gdal"]["vrt"]["output_srs"],
             'resampleAlg': self.__config["gdal"]["vrt"]["resample_algo"]
         }
 
