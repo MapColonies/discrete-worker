@@ -22,10 +22,12 @@
         "tms_compatible": {{ getv "/configuration/discrete/worker/gdal/tms/compatible" "true" }},
         "profile": "{{ getv "/configuration/discrete/worker/gdal/profile" "geodetic"}}",
         "src_nodata": "{{ getv "/configuration/discrete/worker/gdal/src/nodata" "0,0,0"}}",
+        "verbose": {{ getv "/configuration/discrete/worker/gdal/verbose" "false" }},
         "vrt": {
             "no_data": "{{ getv "/configuration/discrete/worker/gdal/vrt/no/data" "0" }}",
             "output_srs": "{{ getv "/configuration/discrete/worker/gdal/vrt/output/srs" "EPSG:4326" }}",
-            "resample_algo": "{{ getv "/configuration/discrete/worker/gdal/vrt/resample/algo" "bilinear" }}"
+            "resample_algo": "{{ getv "/configuration/discrete/worker/gdal/vrt/resample/algo" "bilinear" }}",
+            "add_alpha": {{ getv "/configuration/discrete/worker/gdal/vrt/add/alpha" "true" }}
         }
     },
     "source_mount": "{{ getv "/configuration/discrete/worker/source/mount" "/sourceMount" }}",
