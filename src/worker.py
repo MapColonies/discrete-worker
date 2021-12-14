@@ -39,7 +39,8 @@ class Worker:
         vrt_config = {
             'VRTNodata': self.__config["gdal"]["vrt"]["no_data"],
             'outputSRS': self.__config["gdal"]["vrt"]["output_srs"],
-            'resampleAlg': self.__config["gdal"]["vrt"]["resample_algo"]
+            'resampleAlg': self.__config["gdal"]["vrt"]["resample_algo"],
+            'addAlpha': self.__config["gdal"]["vrt"]["add_alpha"]
         }
 
         self.log.info("Starting process GDAL-BUILD-VRT on {0} and zoom-levels: {1}"
@@ -62,7 +63,8 @@ class Worker:
             'profile': self.__config['gdal']['profile'],
             'nb_processes': self.__config['gdal']['process_count'],
             'srcnodata': self.__config['gdal']['src_nodata'],
-            'zoom': zoom_levels
+            'zoom': zoom_levels,
+            'verbose': self.__config['gdal']['verbose']
         }
         discreteId = task['parameters']['discreteId']
         layerRelativePath = task['parameters']['layerRelativePath']
