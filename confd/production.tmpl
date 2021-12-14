@@ -26,7 +26,7 @@
         "vrt": {
             "no_data": "{{ getv "/configuration/discrete/worker/gdal/vrt/no/data" "0" }}",
             "output_srs": "{{ getv "/configuration/discrete/worker/gdal/vrt/output/srs" "EPSG:4326" }}",
-            "resample_algo": "{{ getv "/configuration/discrete/worker/gdal/vrt/resample/algo" "bilinear" }}",
+            "resample_algo": "{{ getv "/configuration/discrete/worker/gdal/vrt/resample/algo" "average" }}",
             "add_alpha": {{ getv "/configuration/discrete/worker/gdal/vrt/add/alpha" "true" }}
         }
     },
